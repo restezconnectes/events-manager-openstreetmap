@@ -1,0 +1,1030 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Events Manager OpenStreetMap\n"
+"POT-Creation-Date: 2022-03-13 17:22+0100\n"
+"PO-Revision-Date: 2022-03-13 17:25+0100\n"
+"Last-Translator: \n"
+"Language-Team: Restez Connectés <contact@restezconnectes.fr>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/home.php:9
+msgid "Made By Restez Connectés"
+msgstr "Made By Restez Connectés"
+
+#: admin/settings.php:23
+msgid "Seetings are saved!"
+msgstr "Réglages sauvegardés !"
+
+#: admin/settings.php:66
+msgid "EM OpenStreeMap"
+msgstr "EM OpenStreeMap"
+
+#: admin/settings.php:83
+msgid "Select Location Map Page:"
+msgstr "Sélectionnez la page de carte pour les lieux :"
+
+#: admin/settings.php:83 admin/settings.php:94
+msgid "There must be the shortcode:"
+msgstr "Il doit y avoir le shortcode :"
+
+#: admin/settings.php:90 admin/settings.php:101
+msgid "Please select a page"
+msgstr "Sélectionner une page"
+
+#: admin/settings.php:94
+msgid "Select Events Map Page:"
+msgstr "Sélectionnez la page de carte des événements :"
+
+#: admin/settings.php:106
+msgid "Start coordinates:"
+msgstr "Coordonnées de départ :"
+
+#: admin/settings.php:109
+msgid "Latitude:"
+msgstr "Latitude :"
+
+#: admin/settings.php:110
+msgid "Longitude:"
+msgstr "Longitude :"
+
+#: admin/settings.php:111 includes/metabox.php:39
+msgid "Zoom:"
+msgstr "Zoom :"
+
+#: admin/settings.php:119
+msgid "Enter number of days before generate map expiration"
+msgstr "Entrez le nombre de jours avant l’expiration de la carte générée"
+
+#: admin/settings.php:119
+msgid "By default is 15 days."
+msgstr "Par défaut, il est de 15 jours."
+
+#: admin/settings.php:121
+msgid "day"
+msgstr "jour"
+
+#: admin/settings.php:122 admin/settings.php:123 admin/settings.php:124
+#: admin/settings.php:125 admin/settings.php:126 admin/settings.php:127
+#: admin/settings.php:128 admin/settings.php:129
+msgid "days"
+msgstr "jours"
+
+#: admin/settings.php:132
+msgid "Icon for Location Map:"
+msgstr "Icône pour la carte des lieux :"
+
+#: admin/settings.php:132
+msgid "By default is Default"
+msgstr "Par défaut est Default"
+
+#: admin/settings.php:135 includes/metabox.php:370
+msgid "Accountancy"
+msgstr "Comptabilité"
+
+#: admin/settings.php:136 includes/metabox.php:371
+msgid "Arts Crafts"
+msgstr "Les métiers d'art"
+
+#: admin/settings.php:137 includes/metabox.php:372
+msgid "Astrology"
+msgstr "Astrologie"
+
+#: admin/settings.php:138 includes/metabox.php:373
+msgid "Automotive"
+msgstr "Automobile"
+
+#: admin/settings.php:139 includes/metabox.php:374
+msgid "Bars"
+msgstr "Bars"
+
+#: admin/settings.php:140 includes/metabox.php:375
+msgid "Birds"
+msgstr "Oiseaux"
+
+#: admin/settings.php:141 includes/metabox.php:376
+msgid "Books Media"
+msgstr "Livres Médias"
+
+#: admin/settings.php:142 includes/metabox.php:377
+msgid "Breakfast & Brunch"
+msgstr "Petit-Déjeuner & Brunch"
+
+#: admin/settings.php:143 includes/metabox.php:378
+msgid "Business"
+msgstr "Entreprise"
+
+#: admin/settings.php:144 includes/metabox.php:379
+msgid "Cake Shop"
+msgstr "Pâtisserie"
+
+#: admin/settings.php:145 includes/metabox.php:380
+msgid "Clothings"
+msgstr "Vêtements"
+
+#: admin/settings.php:146 includes/metabox.php:381
+msgid "Clubs"
+msgstr "Clubs"
+
+#: admin/settings.php:147 includes/metabox.php:382
+msgid "Coffee & Tea"
+msgstr "Café & Thé"
+
+#: admin/settings.php:148 includes/metabox.php:383
+msgid "Commercial Places"
+msgstr "Lieux commerciaux"
+
+#: admin/settings.php:149 includes/metabox.php:384
+msgid "Community"
+msgstr "Communauté"
+
+#: admin/settings.php:150 includes/metabox.php:385
+msgid "Computers"
+msgstr "Ordinateurs"
+
+#: admin/settings.php:151 includes/metabox.php:386
+msgid "Concerts"
+msgstr "Concerts"
+
+#: admin/settings.php:152 includes/metabox.php:387
+msgid "Cookbooks"
+msgstr "Livres culinaires"
+
+#: admin/settings.php:153 includes/metabox.php:388
+msgid "Dance Clubs"
+msgstr "Clubs de danse"
+
+#: admin/settings.php:154
+msgid "Default"
+msgstr "Défaut"
+
+#: admin/settings.php:155 includes/metabox.php:389
+msgid "Dental"
+msgstr "Dentaire"
+
+#: admin/settings.php:156 includes/metabox.php:390
+msgid "Doctors"
+msgstr "Médecins"
+
+#: admin/settings.php:157 includes/metabox.php:391
+msgid "Education"
+msgstr "Formation"
+
+#: admin/settings.php:158 includes/metabox.php:392
+msgid "Electronics"
+msgstr "Appareils électroniques"
+
+#: admin/settings.php:159 includes/metabox.php:393
+msgid "Employment"
+msgstr "Relation de travail"
+
+#: admin/settings.php:160 includes/metabox.php:394
+msgid "Engineering"
+msgstr "Ingénierie"
+
+#: admin/settings.php:161 includes/metabox.php:395
+msgid "Entertainment"
+msgstr "Divertissement"
+
+#: admin/settings.php:162 includes/metabox.php:396
+msgid "Event"
+msgstr "Événement"
+
+#: admin/settings.php:163 includes/metabox.php:397
+msgid "Exhibitions"
+msgstr "Expositions"
+
+#: admin/settings.php:164 includes/metabox.php:398
+msgid "Fashion"
+msgstr "Mode"
+
+#: admin/settings.php:165 includes/metabox.php:399
+msgid "Festivals"
+msgstr "Festivals"
+
+#: admin/settings.php:166 includes/metabox.php:400
+msgid "Financial Services"
+msgstr "Services financiers"
+
+#: admin/settings.php:167 includes/metabox.php:401
+msgid "Food"
+msgstr "Nourriture"
+
+#: admin/settings.php:168 includes/metabox.php:402
+msgid "Furniture Stores"
+msgstr "Magasins de meubles"
+
+#: admin/settings.php:169 includes/metabox.php:403
+msgid "Games"
+msgstr "Jeux"
+
+#: admin/settings.php:170 includes/metabox.php:404
+msgid "Gifts Flowers"
+msgstr "Fleurs de cadeaux"
+
+#: admin/settings.php:171 includes/metabox.php:405
+msgid "Government"
+msgstr "Gouvernement"
+
+#: admin/settings.php:172 includes/metabox.php:406
+msgid "Halloween"
+msgstr "Halloween"
+
+#: admin/settings.php:173 includes/metabox.php:407
+msgid "Health Medical"
+msgstr "Santé médicale"
+
+#: admin/settings.php:174 includes/metabox.php:408
+msgid "Home Services"
+msgstr "Services à domicile"
+
+#: admin/settings.php:175 includes/metabox.php:409
+msgid "Hotels"
+msgstr "Hôtels"
+
+#: admin/settings.php:176 includes/metabox.php:410
+msgid "Industries"
+msgstr "Industries"
+
+#: admin/settings.php:177 includes/metabox.php:411
+msgid "Internet"
+msgstr "Internet"
+
+#: admin/settings.php:178 includes/metabox.php:412
+msgid "Jewelry"
+msgstr "Bijoux"
+
+#: admin/settings.php:179 includes/metabox.php:413
+msgid "Jobs"
+msgstr "Emplois"
+
+#: admin/settings.php:180 includes/metabox.php:414
+msgid "Karaoke"
+msgstr "Karaoké"
+
+#: admin/settings.php:181 includes/metabox.php:415
+msgid "Law"
+msgstr "Droit"
+
+#: admin/settings.php:182 includes/metabox.php:416
+msgid "Lawn Garden"
+msgstr "Jardin de pelouse"
+
+#: admin/settings.php:183 includes/metabox.php:417
+msgid "Libraries"
+msgstr "Bibliothèques"
+
+#: admin/settings.php:184 includes/metabox.php:418
+msgid "Local Services"
+msgstr "Services de proximité"
+
+#: admin/settings.php:185 includes/metabox.php:419
+msgid "Lounges"
+msgstr "Lounges"
+
+#: admin/settings.php:186 includes/metabox.php:420
+msgid "Magazines"
+msgstr "Magazines"
+
+#: admin/settings.php:187 includes/metabox.php:421
+msgid "Manufacturing"
+msgstr "Système de production"
+
+#: admin/settings.php:188 includes/metabox.php:422
+msgid "Marker New"
+msgstr "Marker Nouveau"
+
+#: admin/settings.php:189 includes/metabox.php:423
+msgid "Mass Media"
+msgstr "Médias de masse"
+
+#: admin/settings.php:190 includes/metabox.php:424
+msgid "Massage Therapy"
+msgstr "Massothérapie"
+
+#: admin/settings.php:191 includes/metabox.php:425
+msgid "Matrimonial"
+msgstr "Matrimonial"
+
+#: admin/settings.php:192 includes/metabox.php:426
+msgid "Medical"
+msgstr "Vérifications"
+
+#: admin/settings.php:193 includes/metabox.php:427
+msgid "Meetups"
+msgstr "Meetups"
+
+#: admin/settings.php:194 includes/metabox.php:428
+msgid "Miscellaneous For Sale"
+msgstr "Divers à vendre"
+
+#: admin/settings.php:195 includes/metabox.php:429
+msgid "Mobile Phones"
+msgstr "Téléphones portables"
+
+#: admin/settings.php:196 includes/metabox.php:430
+msgid "Movies"
+msgstr "Films"
+
+#: admin/settings.php:197 includes/metabox.php:431
+msgid "Museums"
+msgstr "Musées"
+
+#: admin/settings.php:198 includes/metabox.php:432
+msgid "Musical Instruments"
+msgstr "Instruments de Musique"
+
+#: admin/settings.php:199 includes/metabox.php:433
+msgid "Musical"
+msgstr "Musical"
+
+#: admin/settings.php:200 includes/metabox.php:434
+msgid "Nightlife"
+msgstr "Vie nocturne"
+
+#: admin/settings.php:201 includes/metabox.php:435
+msgid "Parks"
+msgstr "Parcs"
+
+#: admin/settings.php:202 includes/metabox.php:436
+msgid "Parties"
+msgstr "Organisations et personnes"
+
+#: admin/settings.php:203 includes/metabox.php:437
+msgid "Pets"
+msgstr "Animaux"
+
+#: admin/settings.php:204 includes/metabox.php:438
+msgid "Photography"
+msgstr "Photography"
+
+#: admin/settings.php:205 includes/metabox.php:439
+msgid "Pizza"
+msgstr "Pizza"
+
+#: admin/settings.php:206 includes/metabox.php:440
+msgid "Places"
+msgstr "Lieux"
+
+#: admin/settings.php:207 includes/metabox.php:441
+msgid "Play Schools"
+msgstr "Écoles de jeu"
+
+#: admin/settings.php:208 includes/metabox.php:442
+msgid "Playgrounds"
+msgstr "Terrains de jeux"
+
+#: admin/settings.php:209 includes/metabox.php:443
+msgid "Pool Halls"
+msgstr "Salles de billard"
+
+#: admin/settings.php:210 includes/metabox.php:444
+msgid "Printing Graphic Arts"
+msgstr "Imprimer des arts graphiques"
+
+#: admin/settings.php:211 includes/metabox.php:445
+msgid "Professional"
+msgstr "Professionnel"
+
+#: admin/settings.php:212 includes/metabox.php:446
+msgid "Real Estate"
+msgstr "Immobilier"
+
+#: admin/settings.php:213 includes/metabox.php:447
+msgid "Religious Organizations"
+msgstr "Organisations religieuses"
+
+#: admin/settings.php:214 includes/metabox.php:448
+msgid "Residential Places"
+msgstr "Lieux résidentiels"
+
+#: admin/settings.php:215 includes/metabox.php:449
+msgid "Restaurants"
+msgstr "Restaurants"
+
+#: admin/settings.php:216 includes/metabox.php:450
+msgid "Retail Stores"
+msgstr "Magasins de vente au détail"
+
+#: admin/settings.php:217 includes/metabox.php:451
+msgid "Saloon"
+msgstr "Berline"
+
+#: admin/settings.php:218 includes/metabox.php:452
+msgid "Schools"
+msgstr "Ecoles"
+
+#: admin/settings.php:219 includes/metabox.php:453
+msgid "Science"
+msgstr "Science"
+
+#: admin/settings.php:220 includes/metabox.php:454
+msgid "Shopping"
+msgstr "Shopping"
+
+#: admin/settings.php:221 includes/metabox.php:455
+msgid "Sporting Goods"
+msgstr "Articles de sport"
+
+#: admin/settings.php:222 includes/metabox.php:456
+msgid "Sports"
+msgstr "Sports"
+
+#: admin/settings.php:223 includes/metabox.php:457
+msgid "Swimming Pools"
+msgstr "Piscines de l’hôtel"
+
+#: admin/settings.php:224 includes/metabox.php:458
+msgid "Telemarketing"
+msgstr "Télémarketing"
+
+#: admin/settings.php:225 includes/metabox.php:459
+msgid "Tickets"
+msgstr "Tickets"
+
+#: admin/settings.php:226 includes/metabox.php:460
+msgid "Tiffin Services"
+msgstr "Tiffin Services"
+
+#: admin/settings.php:227 includes/metabox.php:461
+msgid "Tires Accessories"
+msgstr "Accessoires pneus"
+
+#: admin/settings.php:228 includes/metabox.php:462
+msgid "Tools Hardware"
+msgstr "Matériel d'outils"
+
+#: admin/settings.php:229 includes/metabox.php:463
+msgid "Tours"
+msgstr "Circuits"
+
+#: admin/settings.php:230 includes/metabox.php:464
+msgid "Toys Store"
+msgstr "Magasin de jouets"
+
+#: admin/settings.php:231 includes/metabox.php:465
+msgid "Transport"
+msgstr "Transport"
+
+#: admin/settings.php:232 includes/metabox.php:466
+msgid "Travel"
+msgstr "Voyage"
+
+#: admin/settings.php:233 includes/metabox.php:467
+msgid "Tutors"
+msgstr "Tuteurs"
+
+#: admin/settings.php:234 includes/metabox.php:468
+msgid "Vacant Land"
+msgstr "Terrain vacant"
+
+#: admin/settings.php:239 includes/metabox.php:48 includes/metabox.php:169
+msgid "Default Icon"
+msgstr "Icône par défaut"
+
+#: admin/settings.php:247
+msgid "Size icon for Location Map:"
+msgstr "Taille de l'icône pour la carte des lieux :"
+
+#: admin/settings.php:247
+msgid "Width x Height"
+msgstr "Largeur x Hauteur"
+
+#: admin/settings.php:252
+msgid "Tile for Location & Events Map:"
+msgstr "Calque pour les carte des lieux et événements :"
+
+#: admin/settings.php:255
+msgid "Custom CSS:"
+msgstr "CSS personnalisé :"
+
+#: admin/settings.php:284
+msgid "Customs Values for Shortcodes Map:"
+msgstr "Valeurs personnalisables pour les codes courts des cartes :"
+
+#: admin/settings.php:288
+msgid "Display thumbnail: 0 for none, 1 for display"
+msgstr "Afficher la vignette : 0 pour aucune, 1 pour afficher"
+
+#: admin/settings.php:292
+msgid "Display baselayers icons map: 0 for none, 1 for display"
+msgstr ""
+"Afficher la carte des icônes des couches de base : 0 pour aucune, 1 pour "
+"l’affichage"
+
+#: admin/settings.php:296
+msgid "Change texte for ReadMore link"
+msgstr "Modifier le texte du lien ReadMore"
+
+#: admin/settings.php:300
+msgid "Change type of map: 'location' or 'events'"
+msgstr "Changer le type de carte : 'location' or 'events'"
+
+#: admin/settings.php:304
+msgid "Display search icon map: 0 for none, 1 for display"
+msgstr "Afficher l’icône de recherche : 0 pour aucun, 1 pour l’affichage"
+
+#: admin/settings.php:308
+msgid "Enter a URL for custom icon (only for location map)"
+msgstr ""
+"Entrez une URL pour l’icône personnalisée (uniquement pour la carte des "
+"lieux)"
+
+#: admin/settings.php:312
+msgid "Enter width for custom icon (only for location map)"
+msgstr ""
+"Entrez la largeur de l’icône personnalisée (uniquement pour la carte des "
+"lieux)"
+
+#: admin/settings.php:316
+msgid "Enter height for custom icon (only for location map)"
+msgstr ""
+"Entrez la hauteur pour l’icône personnalisée (uniquement pour la carte des "
+"lieux)"
+
+#: admin/settings.php:320
+msgid "Display Region: 0 for none, 1 for display on marker content"
+msgstr ""
+"Affichage de la région : 0 pour aucun, 1 pour l’affichage dans le contenu du "
+"marqueur"
+
+#: admin/settings.php:324
+msgid "Display State: 0 for none, 1 for display on marker content"
+msgstr ""
+"Affichage de l'état : 0 pour aucun, 1 pour l’affichage dans le contenu du "
+"marqueur"
+
+#: admin/settings.php:328
+msgid "Display Country: 0 for none, 1 for display on marker content"
+msgstr ""
+"Affichage du pays : 0 pour aucun, 1 pour l’affichage sur dans contenu du "
+"marqueur"
+
+#: admin/settings.php:336
+msgid "Give me a gift!"
+msgstr "Offrez-moi un cadeau!"
+
+#: admin/settings.php:351
+msgid "Events Manager OpenStreetMap is brought to you by"
+msgstr "Events Manager OpenStreetMap vous est présenté par"
+
+#: admin/settings.php:351
+msgid "If you found this plugin useful"
+msgstr "Si vous avez trouvé cette extention utile"
+
+#: admin/settings.php:351
+msgid "give it 5 &#9733; on WordPress.org"
+msgstr "donnez-lui 5 &#9733; sur WordPress.org"
+
+#: classes/class.php:77
+msgid "Choose This Image"
+msgstr "Choisir cette image"
+
+#: classes/class.php:78
+msgid "Choose Image"
+msgstr "Choisir une image"
+
+#: classes/class.php:133
+msgid "EM OSM"
+msgstr "EM OSM"
+
+#: classes/class.php:145
+msgid "Locations Map"
+msgstr "Carte des emplacements"
+
+#: classes/class.php:162
+msgid "Events Map"
+msgstr "Carte des évènements"
+
+#: classes/class.php:186
+msgid "Settings"
+msgstr "Réglages"
+
+#: classes/class.php:198 classes/class.php:206
+msgid "You do not have sufficient privileges to access this page."
+msgstr ""
+"Vous n'avez pas les autorisations suffisantes pour accéder à cette page."
+
+#: events-manager-openstreetmap.php:78
+msgid ""
+"Please ensure Events Manager is enabled for the EM OpenStreetMap to work."
+msgstr ""
+"Veuillez vous assurer que Events Manager soit activé pour que EM "
+"OpenStreetMap fonctionnent."
+
+#: events-manager-openstreetmap.php:79
+#, php-format
+msgid "<div class=\"%s\"> <p>%s</p></div>"
+msgstr "<div class=\"%s\"> <p>%s</p></div>"
+
+#: includes/map.php:104 includes/map.php:155
+msgid "Read more"
+msgstr "En savoir plus"
+
+#: includes/map.php:232
+msgid "Search for places or addresses"
+msgstr "Rechercher un lieu ou une adresse"
+
+#: includes/map.php:296
+msgid "All locations on map:"
+msgstr "Tous les emplacements sur la carte:"
+
+#: includes/map.php:343
+msgid "All events on map:"
+msgstr "Tous les événements sur la carte :"
+
+#: includes/metabox.php:15
+msgid "Settings OpenStreetMap"
+msgstr "Paramètres OpenStreetMap"
+
+#: includes/metabox.php:16
+msgid "Location OpenStreetMap"
+msgstr "Emplacement OpenStreetMap"
+
+#: includes/metabox.php:29 includes/metabox.php:165
+msgid "Height:"
+msgstr "Hauteur :"
+
+#: includes/metabox.php:34
+msgid "Tile:"
+msgstr "Fond de carte :"
+
+#: includes/metabox.php:44 includes/metabox.php:166
+msgid "Icon:"
+msgstr "Icône :"
+
+#: includes/metabox.php:47
+msgid "Use category icon"
+msgstr "Utiliser l’icône de catégorie"
+
+#: includes/metabox.php:123
+#, php-format
+msgid "You do not have the rights to manage this %s."
+msgstr "Vous n’avez pas les droits de gérer ce %s."
+
+#: includes/metabox.php:123
+msgid "location"
+msgstr "lieu"
+
+#: includes/metabox.php:158
+msgid ""
+"Search a place with its coordinates with OpenStreeMap, drag the marker for "
+"more precision."
+msgstr ""
+"Recherchez un endroit avec ses coordonnées avec OpenStreeMap, faites glisser "
+"le marqueur pour plus de précision."
+
+#: includes/metabox.php:160
+msgid "SEARCH"
+msgstr "RECHERCHER"
+
+#: includes/metabox.php:164
+msgid "Map Options"
+msgstr "Options de la carte"
+
+#: includes/metabox.php:168
+msgid "Custom Icon"
+msgstr "Icône personnalisée"
+
+#: includes/metabox.php:182
+msgid "Your Custom Icon"
+msgstr "Votre icône personnalisée"
+
+#: includes/metabox.php:186
+msgid "Uploader"
+msgstr "Téléverser"
+
+#: includes/metabox.php:262 includes/metabox.php:274 includes/metabox.php:289
+msgid "Drag marker for more precision."
+msgstr "Faites glisser le marqueur pour plus de précision."
+
+#: includes/metabox.php:294
+msgid "Choose the best answer:"
+msgstr "Choisissez la meilleure réponse :"
+
+#: includes/metabox.php:300
+msgid "Display this location and these coordinates"
+msgstr "Afficher cet emplacement et ces coordonnées"
+
+#: includes/metabox.php:304
+msgid "Sorry... not found"
+msgstr "Désolé... aucune réponse n’a été trouvée"
+
+#: includes/taxonomy.php:39
+msgid "Map Icon"
+msgstr "Icône carte"
+
+#: includes/taxonomy.php:43
+msgid "Add Icon"
+msgstr "Ajouter une icône"
+
+#: includes/taxonomy.php:44 includes/taxonomy.php:81
+msgid "Remove Icon"
+msgstr "Supprimer l’icône"
+
+#: includes/taxonomy.php:69
+msgid "Icon"
+msgstr "Icône"
+
+#: includes/taxonomy.php:80
+msgid "Change Icon"
+msgstr "Changer d'icône"
+
+#~ msgid "Display Layers?"
+#~ msgstr "Afficher les calques ?"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#~ msgid "No"
+#~ msgstr "Non"
+
+#~ msgid "License has been activated"
+#~ msgstr "La licence a été activée"
+
+#~ msgid ""
+#~ "License has not been activated. Check your license key or that your "
+#~ "license is  not expired!"
+#~ msgstr ""
+#~ "La licence n'a pas été activée. Vérifiez votre clé de licence ou que "
+#~ "votre licence n'est pas expirée !"
+
+#~ msgid "EM OpenStreetMap Settings"
+#~ msgstr "Paramètres EM OpenStreetMap"
+
+#~ msgid "License Key"
+#~ msgstr "Clé de licence"
+
+#, php-format
+#~ msgid "Please enter your license key to enable updates to %s."
+#~ msgstr ""
+#~ "S'il vous plaît entrez votre clé de licence pour activer les mises à jour "
+#~ "de %s."
+
+#~ msgid "Complete the setup now."
+#~ msgstr "Compléter votre configuration maintenant."
+
+#~ msgid "A new version is available"
+#~ msgstr "Une nouvelle version est disponible"
+
+#~ msgid "License activated"
+#~ msgstr "Licence activée"
+
+#~ msgid "Expires on"
+#~ msgstr "Expire le"
+
+#~ msgid "Version:"
+#~ msgstr "Version :"
+
+#~ msgid "Renew your License"
+#~ msgstr "Renouveler votre licence"
+
+#~ msgid "Extend your License"
+#~ msgstr "Prolongez votre licence"
+
+#~ msgid "Enter your License Key"
+#~ msgstr "Entrez votre clé de licence"
+
+#~ msgid "Display OpenStreetMap map for Events Manager"
+#~ msgstr "Afficher la carte OpenStreetMap pour Events Manager"
+
+#~ msgid "Address:"
+#~ msgstr "Adresse :"
+
+#~ msgid "City/Town:"
+#~ msgstr "Ville:"
+
+#~ msgid "State/County:"
+#~ msgstr "Région :"
+
+#~ msgid "Postcode:"
+#~ msgstr "Code postal :"
+
+#~ msgid "Region:"
+#~ msgstr "Région:"
+
+#~ msgid "Country:"
+#~ msgstr "Pays :"
+
+#~ msgid "none selected"
+#~ msgstr "aucune sélection"
+
+#~ msgid "BaseLayers"
+#~ msgstr "Couches"
+
+#~ msgid "Thumbnail Settings:"
+#~ msgstr "Réglages de la vignette :"
+
+#~ msgid "Choose a predefined size"
+#~ msgstr "Choisissez une taille prédéfinie"
+
+#~ msgid "Thumbnail"
+#~ msgstr "Miniature"
+
+#~ msgid "Large"
+#~ msgstr "Grande"
+
+#~ msgid "Full"
+#~ msgstr "Plein"
+
+#~ msgid "or enter your's"
+#~ msgstr "ou entrez les vôtres"
+
+#~ msgid "Width"
+#~ msgstr "Largeur"
+
+#~ msgid "Shortcode Options"
+#~ msgstr "Paramètres du code court"
+
+#~ msgid "Display events date?"
+#~ msgstr "Afficher les dates des évènements ?"
+
+#~ msgid "Display events time?"
+#~ msgstr "Afficher l’heure des événements ?"
+
+#~ msgid "Display events excerpt?"
+#~ msgstr "Afficher l’extrait des événements ?"
+
+#~ msgid "Sentence if no event:"
+#~ msgstr "Phrase si aucun événement :"
+
+#~ msgid "There is no event actually..."
+#~ msgstr "Il n'y a pas d'événement actuellement…"
+
+#~ msgid "Display button?"
+#~ msgstr "Afficher un bouton ?"
+
+#~ msgid "Text button:"
+#~ msgstr "Texte du bouton :"
+
+#~ msgid "Color button:"
+#~ msgstr "Couleur du bouton :"
+
+#~ msgid "Color button hover:"
+#~ msgstr "Couleur du bouton survolé :"
+
+#~ msgid "Landscape"
+#~ msgstr "Paysage"
+
+#~ msgid "Portrait"
+#~ msgstr "Portrait"
+
+#~ msgid "&nbsp;<<&nbsp;"
+#~ msgstr "&nbsp;<<&nbsp;"
+
+#~ msgid "&nbsp;>>&nbsp;"
+#~ msgstr "&nbsp;>>&nbsp;"
+
+#~ msgid "Configure your shortcode"
+#~ msgstr "Configurez votre code court"
+
+#~ msgid "Limit:"
+#~ msgstr "Limite :"
+
+#~ msgid "Choose your category"
+#~ msgstr "Choisissez votre catégorie"
+
+#~ msgid "CSS"
+#~ msgstr "Feuille de Style CSS"
+
+#~ msgid "Copied!"
+#~ msgstr "Copié !"
+
+#~ msgid ""
+#~ "Display your Events Manager events on your pages with a simple "
+#~ "shortcode...<br /><br />Customize the display of your events with: <br /"
+#~ "><br />- The size of the images<br />- Date and time<br />- Except<br />- "
+#~ "The color of the button 'Read More...'<br />- The portrait or landscape "
+#~ "type<br />- Choose categories<br />- Number of posts to display<br />- "
+#~ "The CSS customization<br /><br />"
+#~ msgstr ""
+#~ "Afficher vos événements Events Manager sur vos pages avec un simple code "
+#~ "court…<br /><br />Personnaliser l’affichage de vos événements avec :<br /"
+#~ "><br />- La taille des images<br />- La date et l’heure<br />- "
+#~ "L’extrait<br />- La couleur du bouton ‘En savoir plus…’<br />- Le type "
+#~ "portrait ou paysage<br />- La choix de la catégorie<br />- Le nombre "
+#~ "d’événement à afficher<br /><br />- La personnalisation CSS<br /><br />"
+
+#~ msgid "Actually, there is not event!"
+#~ msgstr "Il n'y a pas d'événement actuellement !"
+
+#~ msgid "Fixed bugs & update translation"
+#~ msgstr "Correction des bogues et mise à jour de la traduction"
+
+#~ msgid "Adding license for using this plugin"
+#~ msgstr "Ajout d'une licence pour l'utilisation de cette extension"
+
+#~ msgid "Change design settings page"
+#~ msgstr "Changement du style pour tapage des paramètres"
+
+#~ msgid "Add codemirror for CSS"
+#~ msgstr "Ajout du CodeMirror pour le CSS"
+
+#~ msgid "Adding sentence if not events"
+#~ msgstr "Ajout d’une phrase si il n’y a pas d’événements"
+
+#~ msgid "First version"
+#~ msgstr "Première version"
+
+#~ msgid "License deactivated."
+#~ msgstr "Licence désactivée."
+
+#~ msgid "License has not been deactivated"
+#~ msgstr "La licence n'a pas été désactivée"
+
+#~ msgid "Deactivate"
+#~ msgstr "Désactiver"
+
+#~ msgid "Enter your API License"
+#~ msgstr "Entrez votre N° de licence"
+
+#~ msgid "License has not been activated"
+#~ msgstr "Licence n'a pas été activée"
+
+#~ msgid "Product has been activated"
+#~ msgstr "Le produit a été activé"
+
+#~ msgid "Product has been activated."
+#~ msgstr "Le produit a été activé."
+
+#~ msgid "or"
+#~ msgstr "ou"
+
+#~ msgid "Choice classes:"
+#~ msgstr "Choix des classes :"
+
+#~ msgid "General Class:"
+#~ msgstr "Classe générale :"
+
+#~ msgid "Title Class:"
+#~ msgstr "Titre de la classe :"
+
+#~ msgid "Description Class:"
+#~ msgstr "Description de la classe :"
+
+#~ msgid "Thumbnails padding:"
+#~ msgstr "Marge Interne des vignettes :"
+
+#~ msgid "Widgets Page"
+#~ msgstr "Page des widgets"
+
+#~ msgid "The Evandis widget "
+#~ msgstr "Widget Evandis "
+
+#~ msgid "Displays the Evandis in a widget."
+#~ msgstr "Afficher Evandis dans un widget"
+
+#~ msgid "Proposed by Evandis.fr"
+#~ msgstr "Proposé par Evandis.fr"
+
+#~ msgid "Découvrez Evandis"
+#~ msgstr "Découvrez Evandis"
+
+#~ msgid "Title:"
+#~ msgstr "Titre :"
+
+#~ msgid "Choose your category:"
+#~ msgstr "Choisissez votre catégorie :"
+
+#~ msgid "Excerpt"
+#~ msgstr "Extrait"
+
+#~ msgid "Color link:"
+#~ msgstr "Couleur du lien :"
+
+#~ msgid "Background Color:"
+#~ msgstr "Couleur d’arrière-plan :"
+
+#~ msgid "Border:"
+#~ msgstr "Bordure :"
+
+#~ msgid "Scrolling:"
+#~ msgstr "Défilement"
+
+#~ msgid ""
+#~ "Displays the Jesus film (French version of Agapé France) in a widget."
+#~ msgstr ""
+#~ "Affichez le film Jésus (version française d'Agapé France) dans un widget."
+
+#~ msgid "Visit Jesus.fr"
+#~ msgstr "Visitez Jesus.fr"
+
+#~ msgid "Jesus, his life, his mission"
+#~ msgstr "Jésus, sa vie, sa mission"
+
+#~ msgid "Logo:"
+#~ msgstr "Logo :"
+
+#~ msgid "Dark"
+#~ msgstr "Foncé"
+
+#~ msgid "White"
+#~ msgstr "Blanc"

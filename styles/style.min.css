@@ -1,0 +1,13 @@
+#map {
+width:100%;
+border: 2px solid #ddd;
+height: 250px;
+margin: 0;
+border-radius: 5px;
+}
+#map {
+overflow:hidden;
+padding-bottom:56.25%;
+position:relative;
+height:0;
+}
