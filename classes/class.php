@@ -436,6 +436,15 @@ class EM_Openstreetmap_Class {
         if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
         $paramMMode = get_option('em_openstreetmap_setting');
 
+        if( isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = $paramMMode['latitude']; } else {  $latitude = 47.4; }
+        if( isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = $paramMMode['longitude']; } else { $longitude = 1.6; }
+        if( isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = $paramMMode['zoom']; } else { $zoom = 5.5; }
+        if( isset($paramMMode['tile']) && $paramMMode['tile'] != '') { $tile = $paramMMode['tile']; } else { $tile = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
+        if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] != '') { $icon = $paramMMode['map_icon']; } else { $icon = 'default'; }
+
+        if( isset($paramMMode["map_icon_size_width"]) && $paramMMode['map_icon_size_width'] != '' ) { $icon_width = 33; }
+        if( isset($paramMMode["map_icon_size_height"]) && $paramMMode['map_icon_size_height'] != '' ) { $icon_height = 44; }
+
         $xmlLocationPoint = '';
         $xmlEventsPoint = '';
 
@@ -580,8 +589,414 @@ $file_eventcontents = 'var addressPoints = [
             fclose($events_file);
 
         }
-            
+
+        if ( ($type == 'categories' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
+
+            $file_eventcontents = '';
+            $listEvents = EM_Events::get( array('scope' => 'future', 'owner'=>false) );
+            $events_count = EM_Events::count();
+            $jsonEventsCatPoint = array();
+            $catName = array();
+            $catSlug = array();
+            $arrayLayers = '';
+            if( $events_count >= 1 ) {
         
+                foreach ( $listEvents as $event ) {
+        
+                    // On va cherche les coordonnées du lieu
+                    $EM_Location = em_get_location($event->location_id);
+                    if( isset($EM_Location->location_latitude) && $EM_Location->location_latitude!='' ) {
+        
+                        $idThumbnail = get_post_thumbnail_id( $event->post_id );
+                        $thumbnail = '';
+                        if ( has_post_thumbnail($event->post_id) ) {
+                        $thumbnail = '<div class=\"em-osm-cat-thumbnail\"><a href=\"'.get_the_permalink($event->post_id).'\">'.addslashes(get_the_post_thumbnail( $event->post_id, array(100, 100))).'</a></div>';
+                        }
+                        $localised_start_date = date_i18n(get_option('date_format'), $event->start);
+                        $localised_end_date = date_i18n(get_option('date_format'), $event->end);
+        
+                        if( $localised_end_date != $localised_start_date ) { 
+                            $dateEvent = 'Du '.$localised_start_date .' au '.$localised_end_date; 
+                        } else if($localised_end_date == $localised_start_date) {
+                            $dateEvent = 'Le '.$localised_start_date;
+                        }
+        
+                        $textContentEvent = esc_html($dateEvent).'<br />';
+                        $textContentEvent .= str_replace($order, $replace, get_the_excerpt($event->post_id));
+                        $titleEvent = str_replace('’', "'", $event->event_name);
+        
+                        $mapIcon = get_post_meta($event->post_id, '_location_osm_map_icon', true);
+                        if( isset($mapIcon) && $mapIcon != '') { $icon = $mapIcon; } else { $icon = 'default'; }
+                        
+                        $urlIconCatEvent = EMOSM_PLUGIN_URL.'images/markers/'.$icon.'.png';
+                        
+                        // On va cherche les coordonnées du lieu
+                        $EM_Location = em_get_location($event->location_id);
+                        // On va chercher l'icon de la categorie d'evenement
+                        $EM_Categories = $event->get_categories();
+                        if( $EM_Categories ) {
+                            
+                            foreach( $EM_Categories AS $EM_Category){
+
+                                
+                                $icon_id = get_term_meta ( $EM_Category->term_id, 'em-categories-icon-id', true );
+                                if( $mapIcon == 'none' && isset($icon_id) && is_numeric($icon_id) && $icon_id !=''){
+                                    $urlIconCatEvent = wp_get_attachment_url($icon_id);
+                                }
+
+                                $jsonEventsCatPoint[$EM_Category->term_id][] = '{
+    "type": "Feature",
+    "id": "node/'.$event->post_id.''.$EM_Category->term_id.'",
+    "properties": {
+        "@id": "node/'.$event->post_id.''.$EM_Category->term_id.'",
+        "amenity": "'.$EM_Category->slug.'",
+        "name": "'.esc_html($titleEvent).'",
+        "icon": "'.$urlIconCatEvent.'",
+        "text": "'.$textContentEvent.'",
+        "thumbnail": "'.$thumbnail.'",
+        "link": "'.get_the_permalink($event->post_id).'"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": ['.$EM_Location->location_longitude.', '.$EM_Location->location_latitude.']
+    }
+},
+';
+                                $catName[$EM_Category->term_id] = $EM_Category->name;
+                                $catSlug[$EM_Category->term_id] = $EM_Category->slug;
+                                
+                            }
+                            
+                        }
+                    }
+                }
+
+                
+                $pathJson = '';
+                
+                $catEvents_file = '';
+                foreach( $jsonEventsCatPoint as $idCat => $catpoint){
+                    
+                    $markersByCat = '';
+                    $pointByCat = '';
+
+                    $arrayLayers .= '"'.$catSlug[$idCat].'",';
+                    // Nom du fichier XML pour cette categorie
+                    $pathJson = $createDirectory.'/export-'.$catSlug[$idCat].'.json';
+                    $pointByCat .= '{
+"type": "FeatureCollection",
+"generator": "overpass-turbo",
+"copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+"timestamp": "'.date("Y-m-dH:i:s").'",
+"features": [
+';
+                    for($i = 0; $i < count($catpoint); $i++) {
+$markersByCat .= $catpoint[$i];
+                    }
+                    $pointByCat .= substr($markersByCat, 0, -2);
+$pointByCat .= ']
+}
+';               
+                    // Open or create a file (this does it in the same dir as the script)
+                    $catEvents_file = fopen($pathJson, "w");
+                
+                    // Write the string's contents into that file
+                    fwrite($catEvents_file, $pointByCat);
+                
+                    // Close 'er up
+                    fclose($catEvents_file);
+                }
+
+
+            $scriptFile = '
+/* eslint-disable no-undef */
+/**
+ * control layers outside the map
+ */
+
+var osmLink = "<a href=\"http://openstreetmap.org\">OpenStreetMap France</a>",
+thunLink = "OpenStreetMap HOT",
+esriLink = "Esri WorldStreetMap",
+EsriWorldImagery = "Satellite",
+CyclOSM = "CyclOSM";
+
+var esriUrl = "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
+esriAttrib = "",
+osmUrl = "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
+osmAttrib = "&copy; " + osmLink + " Contributors",
+landUrl = "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+thunAttrib = "&copy; "+osmLink+" Contributors & "+thunLink,        
+EsriWorldImageryUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+EsriWorldImageryAttrib = "&copy; "+osmLink+" Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+CyclOSMUrl = "https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"
+CyclOSMAttrib = "&copy; "+osmLink+" <a href=\"https://github.com/cyclosm/cyclosm-cartocss-style/releases\" title=\"CyclOSM - Open Bicycle render\">CyclOSM</a> | Map data: &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors";
+
+var esriMap = L.tileLayer(esriUrl, {attribution: esriAttrib}),
+osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+landMap = L.tileLayer(landUrl, {attribution: thunAttrib}),
+EsriWorldImagery = L.tileLayer(EsriWorldImageryUrl, {attribution: EsriWorldImageryAttrib}),
+CyclOSM = L.tileLayer(CyclOSMUrl, {attribution: CyclOSMAttrib});
+
+var tiles = L.tileLayer("'.$tile.'", {
+maxZoom: 18,
+attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+id: "mapbox/streets-v11",
+tileSize: 512,
+zoomOffset: -1
+});
+
+const latlng = L.latLng('.$paramMMode['latitude'].', '.$paramMMode['longitude'].');
+
+var options = {
+    maxZoom: 18,
+    center: latlng,
+    zoom: '.$zoom.',
+    layers: [tiles],
+}
+
+var baseLayers = {
+    "Custom OpenStreetMap": tiles,
+    "OpenStreetMap France": esriMap,
+    "OSM Mapnik": osmMap,
+    "OpenStreetMap HOT": landMap,        
+    "Satellite":EsriWorldImagery,
+    "Cycle OSM":CyclOSM
+};
+
+// magnification with which the map will start
+const zoom = '.$zoom.';
+// co-ordinates
+const lat = '.$paramMMode['latitude'].';
+const lng = '.$paramMMode['longitude'].';
+
+// calling map
+const map = L.map("map", options);
+
+/// ------ GEOCODER
+var IconSearch = L.icon({
+    iconUrl: "'.plugins_url().'/events-manager-openstreetmap/images/iconsearch.png",
+    iconSize:     [32, 48],
+    iconAnchor:   [16, 48],
+    popupAnchor:  [-3, -48],
+});
+
+var optionsSearch = {
+    placeholder: "'.__('Search for places or addresses', EMOSM_TXT_DOMAIN).'",
+    //position: "topright"
+}
+        
+// create the geocoding control and add it to the map
+var searchControl = L.esri.Geocoding.geosearch(optionsSearch).addTo(map);
+
+// create an empty layer group to store the results and add it to the map
+var results = L.layerGroup().addTo(map);
+
+// listen for the results event and add every result to the map
+searchControl.on("results", function(data) {
+    results.clearLayers();
+    for (var i = data.results.length - 1; i >= 0; i--) {
+        results.addLayer(L.marker(data.results[i].latlng, { icon: IconSearch }));
+    }
+});
+
+// ------ END 
+
+L.control.layers(baseLayers).addTo(map);
+
+/// ------ HOME BUTTON
+const htmlTemplate =
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>";
+
+// create custom button
+const customControl = L.Control.extend({
+  // button position
+  options: {
+    position: "topleft",
+  },
+
+  // method
+  onAdd: function (map) {
+    console.log(map.getCenter());
+    // create button
+    const btn = L.DomUtil.create("button");
+    btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
+    btn.innerHTML = htmlTemplate;
+    btn.className += "leaflet-bar back-to-home";
+    btn.setAttribute(
+      "style",
+      "margin-top: 46px; left: 0; display: none; cursor: pointer; justify-content: center;"
+    );
+
+    return btn;
+  },
+});
+
+// adding new button to map controll
+map.addControl(new customControl());
+
+const button = document.querySelector(".back-to-home");
+
+// on drag end
+map.on("dragend", getCenterOfMap);
+
+// on zoom end
+map.on("zoomend", getCenterOfMap);
+
+function getCenterOfMap() {
+  const { lat, lng } = map.getCenter();
+  const latDZ = lat.toFixed(5) * 1;
+  const lngDZ = lng.toFixed(5) * 1;
+
+  arrayCheckAndClick([latDZ, lngDZ]);
+}
+
+// compare two arrays, if arrays diffrent show button home-back
+function arrayCheckAndClick(array) {
+  const IfTheDefaultLocationIsDifferent =
+    [lat, lng].sort().join(",") !== array.sort().join(",");
+
+  button.style.display = IfTheDefaultLocationIsDifferent ? "flex" : "none";
+
+  // clicking on home-back set default view and zoom
+  button.addEventListener("click", function () {
+    // more fancy back to previous place
+    map.flyTo([lat, lng], zoom);
+    button.style.display = "none";
+  });
+}
+/// ------ 
+
+// Used to load and display tile layers on the map
+// Most tile servers require attribution, which you can set under `Layer`
+L.tileLayer("'.$paramMMode['tile'].'", {
+  attribution:
+    \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\',
+    id: \'mapbox/streets-v11\',
+    tileSize: 512,
+    zoomOffset: -1
+}).addTo(map);
+
+// ------------------------------------------------------------
+
+// async function to load geojson
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// fetching data from geojson
+const poiLayers = L.layerGroup().addTo(map);
+
+// center map on the clicked marker
+function clickZoom(e) {
+  map.setView(e.target.getLatLng(), 5.5);
+}
+
+let geojsonOpts = {
+  pointToLayer: function (feature, latlng) {
+    var title = feature.properties.name;
+    var urlIcon = feature.properties.icon
+    var catIcon = L.icon({
+        iconUrl: urlIcon,
+        iconSize:     ['.esc_html($icon_width).', '.esc_html($icon_height).'],
+        iconAnchor:   ['.(esc_html($icon_width/2)).', '.esc_html($icon_height).'],
+        popupAnchor:  [-3, -'.(esc_html($icon_height)).'],
+    });
+    // create popup contents
+    var customPopup = "" + feature.properties.thumbnail + "<div class=\"em-osm-cat-content\"><a href=\"" + feature.properties.link + "\" target=\"_blank\"><h3>" + title + "</h3></a><p>" + feature.properties.text + "</p></div><div class=\"clear\"></div><div class=\"em-osm-cat-readmore\"><a href=\"" + feature.properties.link + "\" target=\"_blank\">'.__( 'Read more', EMOSM_TXT_DOMAIN).'</a></div><br />";
+    
+    // specify popup options 
+    var customOptions = {"maxWidth": "500","className" : "customevent"}
+
+    return L.marker(latlng, {title: title, icon: catIcon})
+      .bindPopup(customPopup,customOptions)
+      .on("click", clickZoom);
+  },
+};
+
+const layersContainer = document.querySelector(".catlayers");
+
+const layersButton = "'.__('All Layers', EMOSM_TXT_DOMAIN).'";
+
+function generateButton(name) {
+  const id = name === layersButton ? "all-layers" : name;
+  const itemname = name.replaceAll("-"," ");
+  const templateLayer = `
+    <li class="layer-element">
+      <label for="${id}" class="contentitem">
+        <input type="checkbox" id="${id}" name="item" class="item" value="${name}" checked>
+        <span class="checkmark">${itemname}</span>
+      </label>
+    </li>
+  `;
+
+  layersContainer.insertAdjacentHTML("beforeend", templateLayer);
+}
+
+generateButton(layersButton);
+
+// add data to geoJSON layer and add to LayerGroup
+const arrayLayers = ['.substr($arrayLayers, 0, -1).'];
+//const arrayLayers = ["concerts"];
+arrayLayers.map((json) => {
+  generateButton(json);
+  fetchData(`'.str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $createDirectory).'/export-${json}.json`).then((data) => {
+    window["layer_" + json] = L.geoJSON(data, geojsonOpts).addTo(map);
+  });
+});
+
+document.addEventListener("click", (e) => {
+  const target = e.target;
+
+  const itemInput = target.closest(".item");
+
+  if (!itemInput) return;
+
+  showHideLayer(target);
+});
+
+function showHideLayer(target) {
+  if (target.id === "all-layers") {
+    arrayLayers.map((json) => {
+      checkedType(json, target.checked);
+    });
+  } else {
+    checkedType(target.id, target.checked);
+  }
+
+  const checkedBoxes = document.querySelectorAll("input[name=item]:checked");
+
+  document.querySelector("#all-layers").checked =
+    checkedBoxes.length <= 3 ? false : true;
+}
+
+function checkedType(id, type) {
+  map[type ? "addLayer" : "removeLayer"](window["layer_" + id]);
+
+  map.fitBounds(window[["layer_" + id]].getBounds(), { padding: [50, 50] });
+
+  document.querySelector(`#${id}`).checked = type;
+}
+
+';
+
+                // Open or create a file (this does it in the same dir as the script)
+                $pathScript = $createDirectory.'/export-cat.js';
+                $catEvents_scriptfile = fopen($pathScript, "w");
+                                
+                // Write the string's contents into that file
+                fwrite($catEvents_scriptfile, $scriptFile);
+
+                // Close 'er up
+                fclose($catEvents_scriptfile);
+
+            }  
+        }
 
         return $pathXml;
 

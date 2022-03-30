@@ -43,8 +43,8 @@ function em_openstreetmap_settings($post) {
             <td><strong><?php _e('Icon:', EMOSM_TXT_DOMAIN); ?></strong></td>
             <td>
                 <select name="em_openstreetmap_map_icon" style="border: 1px solid #ececec;padding: 0 8px;line-height: 2;min-height: 30px;text-align: left;" >
-                    <option value="default" <?php if( isset($mapIcon) && $mapIcon == 'default') { $selected = 'selected'; } ?>><?php _e('Default Icon', EMOSM_TXT_DOMAIN); ?></option>
-                    <option value="none" <?php if( isset($mapIcon) && $mapIcon == 'none') { $selected = 'selected'; } ?>><?php _e('Use category icon', EMOSM_TXT_DOMAIN); ?></option>
+                    <option value="default" <?php if( isset($mapIcon) && $mapIcon == 'default') { echo 'selected'; } ?>><?php _e('Default Icon', EMOSM_TXT_DOMAIN); ?></option>
+                    <option value="none" <?php if( isset($mapIcon) && $mapIcon == 'none') { echo 'selected'; } ?>><?php _e('Use category icon', EMOSM_TXT_DOMAIN); ?></option>
                     <?php //asort($listIcons); 
                         $listIcons = get_list_cons();
                         foreach( $listIcons as $value => $name) { 
@@ -167,8 +167,8 @@ function em_openstreetmap_location($post) {
                 <!--<?php _e('Height:', EMOSM_TXT_DOMAIN); ?> <input type="text" size="4" name="em_openstreetmap_map_height" value="<?php echo intval($mapHeight); ?>">px<br />-->
                 <?php _e('Icon:', EMOSM_TXT_DOMAIN); ?>
                 <select name="em_location_icon" style="border: 1px solid #ececec;padding: 0 8px;line-height: 2;min-height: 30px;text-align: left;" >
-                    <option value="default" <?php if( isset($mapIcon) && $mapIcon == 'default') { $selected = 'selected'; } ?>><?php _e('Default Icon', EMOSM_TXT_DOMAIN); ?></option>
-                    <option value="custom" <?php if( isset($mapIcon) && $mapIcon == 'custom') { $selected = 'selected'; } ?>><?php _e('Custom Icon', EMOSM_TXT_DOMAIN); ?></option>
+                    <option value="default" <?php if( isset($mapIcon) && $mapIcon == 'default') { echo 'selected'; } ?>><?php _e('Default Icon', EMOSM_TXT_DOMAIN); ?></option>
+                    <option value="custom" <?php if( isset($mapIcon) && $mapIcon == 'custom') { echo 'selected'; } ?>><?php _e('Custom Icon', EMOSM_TXT_DOMAIN); ?></option>
                     <?php //asort($listIcons); 
                         $listIcons = get_list_cons();
                         foreach( $listIcons as $value => $name) { 

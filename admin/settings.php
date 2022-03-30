@@ -83,36 +83,51 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                     <tr style="background-color:#D8DCE1;">
                         <td style="padding:2em;width:125px;">
                             
-                            <strong><?php _e( 'Select Location Map Page:', EMOSM_TXT_DOMAIN ); ?></strong><p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap]</p>
+                            <strong><?php _e( 'Select Location Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
                             <?php
                             if( get_option('em_openstreetmap_location_page' ) ) {
                                 $idSelectPage = get_option('em_openstreetmap_location_page' );
+                                $linkPage = ' (<a href="'.get_the_permalink($idSelectPage).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
                                 $idSelectPage = 0;
+                                $linkPage = '';
                             }
+                            ?>
+                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap]<?php echo $linkPage; ?></p>
+                            <?php
                             $args = array('name' => 'em_page_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
                             wp_dropdown_pages($args);
 
                             ?><br /><br />
-                            <strong><?php _e( 'Select Events Map Page:', EMOSM_TXT_DOMAIN ); ?></strong><p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap type="events"]</p>
+                            <strong><?php _e( 'Select Events Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
                             <?php
                             if( get_option('em_openstreetmap_events_page' ) ) {
-                                $idSelectPage = get_option('em_openstreetmap_events_page' );
+                                $idSelectPageEvents = get_option('em_openstreetmap_events_page' );
+                                $linkPageEvents = ' (<a href="'.get_the_permalink($idSelectPageEvents).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
-                                $idSelectPage = 0;
+                                $idSelectPageEvents = 0;
+                                $linkPageEvents = '';
                             }
-                            $args = array('name' => 'em_page_events_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            ?>
+                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap type="events"]<?php echo $linkPageEvents; ?></p>
+                            <?php
+                            $args = array('name' => 'em_page_events_idmap', 'selected' => $idSelectPageEvents, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
                             wp_dropdown_pages($args);
 
                             ?><br /><br />
-                            <strong><?php _e( 'Select Cat Map Page:', EMOSM_TXT_DOMAIN ); ?></strong><p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap_cat]</p>
+                            <strong><?php _e( 'Select Cat Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
                             <?php
                             if( get_option('em_openstreetmap_events_cat_page' ) ) {
-                                $idSelectPage = get_option('em_openstreetmap_events_cat_page' );
+                                $idSelectPageCat = get_option('em_openstreetmap_events_cat_page' );
+                                $linkPageCat = ' (<a href="'.get_the_permalink($idSelectPageCat).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
-                                $idSelectPage = 0;
+                                $idSelectPageCat = 0;
+                                $linkPageCat = '';
                             }
-                            $args = array('name' => 'em_page_events_cat_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            ?>
+                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap_categories]<?php echo $linkPageCat; ?></p>
+                            <?php
+                            $args = array('name' => 'em_page_events_cat_idmap', 'selected' => $idSelectPageCat, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
                             wp_dropdown_pages($args);
 
                             ?>
@@ -289,6 +304,22 @@ $paramMMode['css'] = '/* CSS for location map */
 .customevent .leaflet-popup-content-wrapper {background: #ffffff;color: #333333;width:400px;}
 #event-map {width:100%;margin: 10px 0px 10px 0px;overflow:hidden;position:relative;margin-left: auto;margin-right: auto; }
 .btn-markers {padding: 3px 5px;border: 1px solid #333;margin-top: 5px;margin-bottom: 5px;margin-right:5px;width: 70px;cursor: pointer;}
+/* Legend categories*/
+.catlayers {display: flex;flex-wrap: wrap;justify-content: center;padding: 10px;gap: 10px;}
+label {display: flex;align-items: center;gap: 8px;text-transform: uppercase;cursor: pointer;}
+.contentitem input {appearance: none;width: 20px;height: 20px;border: 2px solid #555555;background-clip: content-box;padding: 3px;cursor: pointer;}
+.contentitem input:checked {background-color: #525252;}
+ul {margin: 10px;padding: 0;list-style-type: none;}
+.layer-element {list-style: none;}
+/* CSS for categories events map */
+.em-osm-cat-thumbnail{float:left;width:30%;padding-right:2em;}
+.em-osm-cat-content{text-align:center;}
+.em-osm-cat-readmore{padding:0.5em;text-align:center;background: #333333;color: #ffffff;}
+.em-osm-cat-readmore a:link, .em-osm-single-readmore a:hover, .em-osm-single-readmore a:visited{color: #ffffff;}
+/* Back to home button */
+.back-to-home {position: absolute;top: 80px;left: 10px;width: 26px;height: 26px;z-index: 999;cursor: pointer;display: none;padding: 5px;background: #fff;border-radius: 4px;box-shadow: 0 1px 5px rgb(0 0 0 / 65%);}
+.leaflet-touch .back-to-home {width: 34px;height: 34px;}
+    
 ';
                             }
                             ?>

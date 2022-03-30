@@ -75,6 +75,10 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
                 $marker_icon_width = 33;
                 $marker_icon_height = 44;
             }
+            if( isset($marker_icon_width) && $marker_icon_width=="") { $marker_icon_width = 33; }
+            if( isset($marker_icon_height) && $marker_icon_height=="") { $marker_icon_height = 44; }
+            if (file_exists($urlIcon)) { } else { $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png'; }
+
             $EM_Location = em_get_location($EM_Event->location_id);
 
             $replace = '<!-- '.$mapLayer.'-->
@@ -376,6 +380,79 @@ if( $type == 'location' ) {
     return $map;
 }
 add_shortcode( 'em_osmap', 'em_openstreetmap_map' );
+
+
+function em_openstreetmap_map_categories( $atts ) {
+
+    global $EM_Location;
+    global $post;
+
+    // pour le formatage
+    $order   = array("\r\n", "\n", "\r", "<p>");
+    $replace = '<br />';
+
+    // Récupère les paramètres sauvegardés
+    if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
+    $paramMMode = get_option('em_openstreetmap_setting');
+
+    if( isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = $paramMMode['latitude']; } else {  $latitude = 47.4; }
+    if( isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = $paramMMode['longitude']; } else { $longitude = 1.6; }
+    if( isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = $paramMMode['zoom']; } else { $zoom = 5.5; }
+    if( isset($paramMMode['tile']) && $paramMMode['tile'] != '') { $tile = $paramMMode['tile']; } else { $tile = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
+    if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] != '') { $icon = $paramMMode['map_icon']; } else { $icon = 'default'; }
+
+    if( isset($paramMMode["map_icon_size_width"]) && $paramMMode['map_icon_size_width'] != '' ) { $icon_width = 33; }
+    if( isset($paramMMode["map_icon_size_height"]) && $paramMMode['map_icon_size_height'] != '' ) { $icon_height = 44; }
+
+    // Attributes
+    extract( shortcode_atts(
+        array(
+            'type' => 'location',
+            'name' => '',
+            'thumbnails' => 1,
+            'state' => 0,
+            'region' => 0,
+            'country' => 0,
+            'baseLayers' => 1,
+            'search' => 1,
+            'icon_url' => plugins_url()."/events-manager-openstreetmap/images/markers/".$icon.".png",
+            'icon_width' => 33,
+            'icon_height' => 44,
+            'readmore' => __( 'Read more', EMOSM_TXT_DOMAIN),
+            'legend_location' => 1,
+            'legend_events' => 1,
+            'cat' => '',
+            'limit' => 0,
+            'height' => 450,
+            'map_latitude' => '',
+            'map_longitude' => '',
+            'clickZoom' => 1,
+            'clickValZoom' => 10,
+            'cat' => '',
+        ), $atts )
+    );
+
+    $upload_dir = wp_upload_dir();
+    $createDirectory = EM_Openstreetmap_Class::em_openstreetmap_folder_uploads('categories');
+    $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories');
+    // Nom du fichier XML
+    //$pathXml = $createDirectory.'/xml-export-categories.js';
+
+    $nameMap = '';
+    if( isset($name) && $name!='') {
+        $nameMap = '_'.esc_html($name);
+        $map = "<style>#map".$nameMap." {height:".esc_html($height)."px;}</style>";
+    }
+
+    $map = "<div id=\"map".$nameMap."\"></div>
+    <ul class=\"catlayers\"></ul>";
+
+    $map .= "<script src=\"".$upload_dir['baseurl']."/em-map-export/categories/export-cat.js\"></script>";
+
+
+    return $map;
+}
+add_shortcode( 'em_osmap_categories', 'em_openstreetmap_map_categories' );
 
 function em_openstreetmap_map_cat( $atts ) {
 
@@ -773,4 +850,4 @@ $map .= "
 
     return $map;
 }
-add_shortcode( 'em_osmap_cat', 'em_openstreetmap_map_cat' );
+//add_shortcode( 'em_osmap_cat', 'em_openstreetmap_map_cat' );
