@@ -76,6 +76,7 @@ function em_openstreetmap_settings_save( $post_id ) {
     if( isset($_POST['em_openstreetmap_map_icon']) && $_POST['em_openstreetmap_map_icon']!='' ) { $mapIcon = sanitize_text_field($_POST['em_openstreetmap_map_icon']); } else { $mapIcon = 'default'; }
     update_post_meta($post_id, '_location_osm_map_icon', $mapIcon);
     $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', 0, 1);
+    $genereCategorie = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', 0, 1);
 }
 add_action( 'save_post', 'em_openstreetmap_settings_save' );
 
@@ -352,6 +353,7 @@ function em_openstreetmap_metabox_save( $post_id ) {
         update_post_meta($post_id, '_location_latitude', sanitize_text_field($_POST['em_location_latitude']));
         update_post_meta($post_id, '_location_longitude', sanitize_text_field($_POST['em_location_longitude']));
         $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('location', '', 0, 1);
+        $genereCategorie = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', 0, 1);
         $data = array(
             'location_latitude' => sanitize_text_field($_POST['em_location_latitude']),
             'location_longitude' => sanitize_text_field($_POST['em_location_longitude']),

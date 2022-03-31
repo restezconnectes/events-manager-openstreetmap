@@ -64,6 +64,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
                             $urlIcon = wp_get_attachment_url($iconId);
                         } else {
                             $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png';
+                            
                         }
                     }
                 }
@@ -77,11 +78,11 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             }
             if( isset($marker_icon_width) && $marker_icon_width=="") { $marker_icon_width = 33; }
             if( isset($marker_icon_height) && $marker_icon_height=="") { $marker_icon_height = 44; }
-            if (file_exists($urlIcon)) { } else { $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png'; }
+            if ( $urlIcon == '' ) { $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png'; }
 
             $EM_Location = em_get_location($EM_Event->location_id);
 
-            $replace = '<!-- '.$mapLayer.'-->
+            $replace = '<!-- '.$urlIcon.'-->
             <div id="event-map" style="height: '.$height.'px!important;"></div>';
             $replace .= "<script>
                 const map = L.map('event-map').setView([".$latitude.", ".$longitude."], ".$zoom.");
@@ -433,8 +434,8 @@ function em_openstreetmap_map_categories( $atts ) {
     );
 
     $upload_dir = wp_upload_dir();
-    $createDirectory = EM_Openstreetmap_Class::em_openstreetmap_folder_uploads('categories');
-    $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories');
+    //$createDirectory = EM_Openstreetmap_Class::em_openstreetmap_folder_uploads('categories');
+    $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', 0, 1);
     // Nom du fichier XML
     //$pathXml = $createDirectory.'/xml-export-categories.js';
 

@@ -453,8 +453,10 @@ class EM_Openstreetmap_Class {
         $upload_dir = wp_upload_dir();
         $createDirectory = self::em_openstreetmap_folder_uploads($type);
 
-        // Nom du fichier XML
+        // Nom du fichier XML- Carte des événements ou lieux
         $pathXml = $createDirectory.'/xml-export-'.$type.'.js';
+        // Nom du fichier JS - Carte des catégories
+        $pathScript = $createDirectory.'/export-cat.js';
 
         // pour le formatage
         $order   = array("\r\n", "\n", "\r", "<p>");
@@ -589,8 +591,8 @@ $file_eventcontents = 'var addressPoints = [
             fclose($events_file);
 
         }
-
-        if ( ($type == 'categories' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
+        
+        if ( ($type == 'categories' && file_exists($pathScript) === FALSE) && $forceGenerate == 1 ) {
 
             $file_eventcontents = '';
             $listEvents = EM_Events::get( array('scope' => 'future', 'owner'=>false) );
@@ -745,7 +747,7 @@ tileSize: 512,
 zoomOffset: -1
 });
 
-const latlng = L.latLng('.$paramMMode['latitude'].', '.$paramMMode['longitude'].');
+const latlng = L.latLng('.$latitude.', '.$longitude.');
 
 var options = {
     maxZoom: 18,
@@ -766,8 +768,8 @@ var baseLayers = {
 // magnification with which the map will start
 const zoom = '.$zoom.';
 // co-ordinates
-const lat = '.$paramMMode['latitude'].';
-const lng = '.$paramMMode['longitude'].';
+const lat = '.$latitude.';
+const lng = '.$longitude.';
 
 // calling map
 const map = L.map("map", options);
@@ -986,7 +988,6 @@ function checkedType(id, type) {
 ';
 
                 // Open or create a file (this does it in the same dir as the script)
-                $pathScript = $createDirectory.'/export-cat.js';
                 $catEvents_scriptfile = fopen($pathScript, "w");
                                 
                 // Write the string's contents into that file
