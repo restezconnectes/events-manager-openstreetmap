@@ -452,11 +452,14 @@ class EM_Openstreetmap_Class {
 
         $upload_dir = wp_upload_dir();
         $createDirectory = self::em_openstreetmap_folder_uploads($type);
-
-        // Nom du fichier XML- Carte des événements ou lieux
-        $pathXml = $createDirectory.'/xml-export-'.$type.'.js';
-        // Nom du fichier JS - Carte des catégories
-        $pathScript = $createDirectory.'/export-cat.js';
+        
+        if( $type == 'categories' ) {
+            // Nom du fichier JS - Carte des catégories
+            $pathXml = $createDirectory.'/export-'.$type.'.js';
+        } else {
+            // Nom du fichier XML- Carte des événements ou lieux
+            $pathXml = $createDirectory.'/xml-export-'.$type.'.js';
+        }
 
         // pour le formatage
         $order   = array("\r\n", "\n", "\r", "<p>");
@@ -592,7 +595,7 @@ $file_eventcontents = 'var addressPoints = [
 
         }
         
-        if ( ($type == 'categories' && file_exists($pathScript) === FALSE) && $forceGenerate == 1 ) {
+        if ( ($type == 'categories' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
 
             $file_eventcontents = '';
             $listEvents = EM_Events::get( array('scope' => 'future', 'owner'=>false) );
@@ -818,7 +821,7 @@ const customControl = L.Control.extend({
 
   // method
   onAdd: function (map) {
-    console.log(map.getCenter());
+    //console.log(map.getCenter());
     // create button
     const btn = L.DomUtil.create("button");
     btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
@@ -988,7 +991,7 @@ function checkedType(id, type) {
 ';
 
                 // Open or create a file (this does it in the same dir as the script)
-                $catEvents_scriptfile = fopen($pathScript, "w");
+                $catEvents_scriptfile = fopen($pathXml, "w");
                                 
                 // Write the string's contents into that file
                 fwrite($catEvents_scriptfile, $scriptFile);
