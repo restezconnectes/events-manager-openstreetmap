@@ -166,7 +166,8 @@ function em_openstreetmap_map( $atts ) {
             'height' => 450,
             'map_latitude' => '',
             'map_longitude' => '',
-            'home_button' => 1
+            'home_button' => 1,
+            'mini_map' => 1
         ), $atts )
     );
 
@@ -443,6 +444,14 @@ if( $type == 'location' ) {
         }
         /// ------ 
         ';
+    }
+    if( $mini_map == 1 ) {
+        $map .= "
+        const attribution =
+        '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
+        const osm2 = new L.TileLayer('".$tile."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
+        var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true }).addTo(map);
+        ";
     }
 
 $map .= "
