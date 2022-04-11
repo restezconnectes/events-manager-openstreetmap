@@ -608,7 +608,6 @@ $file_eventcontents = 'var addressPoints = [
         
         if ( ($type == 'categories' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
 
-error_log('JSON CAT GENERE : '.date("Y-m-dH:i:s"));
             $file_eventcontents = '';
             $listEvents = EM_Events::get( array('scope' => 'future', 'owner'=>false) );
             $events_count = EM_Events::count();
@@ -789,99 +788,6 @@ const lng = '.$longitude.';
 // calling map
 const map = L.map("map", options);
 
-/// ------ GEOCODER
-var IconSearch = L.icon({
-    iconUrl: "'.plugins_url().'/events-manager-openstreetmap/images/iconsearch.png",
-    iconSize:     [32, 48],
-    iconAnchor:   [16, 48],
-    popupAnchor:  [-3, -48],
-});
-
-var optionsSearch = {
-    placeholder: "'.__('Search for places or addresses', EMOSM_TXT_DOMAIN).'",
-    //position: "topright"
-}
-        
-// create the geocoding control and add it to the map
-var searchControl = L.esri.Geocoding.geosearch(optionsSearch).addTo(map);
-
-// create an empty layer group to store the results and add it to the map
-var results = L.layerGroup().addTo(map);
-
-// listen for the results event and add every result to the map
-searchControl.on("results", function(data) {
-    results.clearLayers();
-    for (var i = data.results.length - 1; i >= 0; i--) {
-        results.addLayer(L.marker(data.results[i].latlng, { icon: IconSearch }));
-    }
-});
-
-// ------ END 
-
-L.control.layers(baseLayers).addTo(map);
-
-/// ------ HOME BUTTON
-const htmlTemplate =
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>";
-
-// create custom button
-const customControl = L.Control.extend({
-  // button position
-  options: {
-    position: "topleft",
-  },
-
-  // method
-  onAdd: function (map) {
-    //console.log(map.getCenter());
-    // create button
-    const btn = L.DomUtil.create("button");
-    btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
-    btn.innerHTML = htmlTemplate;
-    btn.className += "leaflet-bar back-to-home";
-    btn.setAttribute(
-      "style",
-      "margin-top: 46px; left: 0; display: none; cursor: pointer; justify-content: center;"
-    );
-
-    return btn;
-  },
-});
-
-// adding new button to map controll
-map.addControl(new customControl());
-
-const button = document.querySelector(".back-to-home");
-
-// on drag end
-map.on("dragend", getCenterOfMap);
-
-// on zoom end
-map.on("zoomend", getCenterOfMap);
-
-function getCenterOfMap() {
-  const { lat, lng } = map.getCenter();
-  const latDZ = lat.toFixed(5) * 1;
-  const lngDZ = lng.toFixed(5) * 1;
-
-  arrayCheckAndClick([latDZ, lngDZ]);
-}
-
-// compare two arrays, if arrays diffrent show button home-back
-function arrayCheckAndClick(array) {
-  const IfTheDefaultLocationIsDifferent =
-    [lat, lng].sort().join(",") !== array.sort().join(",");
-
-  button.style.display = IfTheDefaultLocationIsDifferent ? "flex" : "none";
-
-  // clicking on home-back set default view and zoom
-  button.addEventListener("click", function () {
-    // more fancy back to previous place
-    map.flyTo([lat, lng], zoom);
-    button.style.display = "none";
-  });
-}
-/// ------ 
 
 // Used to load and display tile layers on the map
 // Most tile servers require attribution, which you can set under `Layer`

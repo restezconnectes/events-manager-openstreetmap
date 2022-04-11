@@ -48,3 +48,4 @@ Current Version:  2.0.0
 ![Settings Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-2.png)
 ![Event view](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-3.png)
 ![Admin Settings Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-4.png)
+![Categories Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-5.png)

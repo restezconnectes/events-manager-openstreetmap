@@ -349,6 +349,10 @@ ul {margin: 10px;padding: 0;list-style-type: none;}
                                     <td><?php _e('Display Legend Events: 0 for none, 1 for display', EMOSM_TXT_DOMAIN); ?></td>
                                 </tr>
                                 <tr>
+                                    <td><strong><i>mini_map</i></strong></td>
+                                    <td><?php _e('Display Mini-Map on your map', EMOSM_TXT_DOMAIN); ?></td>
+                                </tr>
+                                <tr>
                                     <td><strong><i>cat</i></strong></td>
                                     <td><?php _e('Display Events by Category for Events Map', EMOSM_TXT_DOMAIN); ?></td>
                                 </tr>

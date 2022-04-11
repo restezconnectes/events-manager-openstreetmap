@@ -510,6 +510,8 @@ function em_openstreetmap_map_categories( $atts ) {
             'clickZoom' => 1,
             'clickValZoom' => 10,
             'cat' => '',
+            'mini_map' => 1,
+            'home_button' => 1
         ), $atts )
     );
 
@@ -529,12 +531,126 @@ function em_openstreetmap_map_categories( $atts ) {
     <ul class=\"catlayers\"></ul>";
 
     $map .= "<script src=\"".str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $genereFile)."\"></script>";
+    $map .= "<script>
+    // OPTIONS FOR MAP
+    ";
+    if( $baseLayers == 1 ) {
+        $map .= "L.control.layers(baseLayers).addTo(map);";
+    }
+    if( $search == 1 ) {
+    $map .= '
+    /// ------ GEOCODER
+    var IconSearch = L.icon({
+        iconUrl: "'.plugins_url().'/events-manager-openstreetmap/images/iconsearch.png",
+        iconSize:     [32, 48],
+        iconAnchor:   [16, 48],
+        popupAnchor:  [-3, -48],
+    });
+
+    var optionsSearch = {
+        placeholder: "'.__('Search for places or addresses', EMOSM_TXT_DOMAIN).'",
+        //position: "topright"
+    }
+            
+    // create the geocoding control and add it to the map
+    var searchControl = L.esri.Geocoding.geosearch(optionsSearch).addTo(map);
+
+    // create an empty layer group to store the results and add it to the map
+    var results = L.layerGroup().addTo(map);
+
+    // listen for the results event and add every result to the map
+    searchControl.on("results", function(data) {
+        results.clearLayers();
+        for (var i = data.results.length - 1; i >= 0; i--) {
+            results.addLayer(L.marker(data.results[i].latlng, { icon: IconSearch }));
+        }
+    });
+
+    // ------ END 
+    ';
+    }
+    if( $home_button == 1 ) {
+        $map .= '
+    /// ------ HOME BUTTON
+    const htmlTemplate =
+    "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>";
+
+    // create custom button
+    const customControl = L.Control.extend({
+    // button position
+    options: {
+        position: "topleft",
+    },
+
+    // method
+    onAdd: function (map) {
+        //console.log(map.getCenter());
+        // create button
+        const btn = L.DomUtil.create("button");
+        btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
+        btn.innerHTML = htmlTemplate;
+        btn.className += "leaflet-bar back-to-home";
+        btn.setAttribute(
+        "style",
+        "margin-top: 46px; left: 0; display: none; cursor: pointer; justify-content: center;"
+        );
+
+        return btn;
+    },
+    });
+
+    // adding new button to map controll
+    map.addControl(new customControl());
+
+    const button = document.querySelector(".back-to-home");
+
+    // on drag end
+    map.on("dragend", getCenterOfMap);
+
+    // on zoom end
+    map.on("zoomend", getCenterOfMap);
+
+    function getCenterOfMap() {
+    const { lat, lng } = map.getCenter();
+    const latDZ = lat.toFixed(5) * 1;
+    const lngDZ = lng.toFixed(5) * 1;
+
+    arrayCheckAndClick([latDZ, lngDZ]);
+    }
+
+    // compare two arrays, if arrays diffrent show button home-back
+    function arrayCheckAndClick(array) {
+    const IfTheDefaultLocationIsDifferent =
+        [lat, lng].sort().join(",") !== array.sort().join(",");
+
+    button.style.display = IfTheDefaultLocationIsDifferent ? "flex" : "none";
+
+    // clicking on home-back set default view and zoom
+    button.addEventListener("click", function () {
+        // more fancy back to previous place
+        map.flyTo([lat, lng], zoom);
+        button.style.display = "none";
+    });
+    }
+    /// ------ 
+        ';
+    }
+
+    if( $mini_map == 1 ) {
+        $map .= "
+    const attribution =
+    '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
+    const osm2 = new L.TileLayer('".$tile."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
+    var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true }).addTo(map);
+    ";
+    }
+    $map .= "</script>";
 
 
     return $map;
 }
 add_shortcode( 'em_osmap_categories', 'em_openstreetmap_map_categories' );
-
+/*
 function em_openstreetmap_map_cat( $atts ) {
 
     global $EM_Location;
@@ -931,4 +1047,4 @@ $map .= "
 
     return $map;
 }
-//add_shortcode( 'em_osmap_cat', 'em_openstreetmap_map_cat' );
+//add_shortcode( 'em_osmap_cat', 'em_openstreetmap_map_cat' );*/
