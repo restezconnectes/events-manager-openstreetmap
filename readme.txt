@@ -33,6 +33,7 @@ File events-manager-openstreetmap.pot available
 2. Settings Map
 3. Event view
 4. Admin Settings Map
+5. Categories Events Map
 
 == Changelog ==
 
