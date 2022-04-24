@@ -476,8 +476,12 @@ class EM_Openstreetmap_Class {
         $order   = array("\r\n", "\n", "\r", "<p>");
         $replace = '<br />';
             
-        // Generation des lieux
-        if( ($type == 'location' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
+        /** 
+         * 
+         * Generation des lieux
+         * 
+         * */
+        if( $type == 'location' && (file_exists($pathXml) === FALSE || $forceGenerate == 1) ) {
 
             $EM_Locations = EM_Locations::get();
 
@@ -530,10 +534,15 @@ $file_locationcontents = 'var addressPoints = [
             // Close 'er up
             fclose($location_file);
         
-        // Generation des evenements
+        
         } 
         
-        if ( ($type == 'events' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
+        /** 
+         * 
+         * Generation des evenements
+         * 
+         * */
+        if ( $type == 'events' && (file_exists($pathXml) === FALSE OR $forceGenerate == 1) ) {
 
             $listEvents = EM_Events::get( array('limit'=>$limit, 'category' => $cat, 'scope' => 'future', 'owner'=>false) );
             $events_count = EM_Events::count();
@@ -604,11 +613,15 @@ $file_eventcontents = 'var addressPoints = [
             // Close 'er up
             fclose($events_file);
 
-        }
+        } 
         
-        if ( ($type == 'categories' && file_exists($pathXml) === FALSE) || $forceGenerate == 1 ) {
+        /** 
+         * 
+         * Generation des categories
+         * 
+         * */
+        if ( $type == 'categories' && (file_exists($pathXml) === FALSE || $forceGenerate == 1) ) {
 
-            $file_eventcontents = '';
             $listEvents = EM_Events::get( array('scope' => 'future', 'owner'=>false) );
             $events_count = EM_Events::count();
             $jsonEventsCatPoint = array();
@@ -691,7 +704,7 @@ $file_eventcontents = 'var addressPoints = [
                 $pathJson = '';
                 
                 $catEvents_file = '';
-                foreach( $jsonEventsCatPoint as $idCat => $catpoint){
+                foreach( $jsonEventsCatPoint as $idCat => $catpoint ) {
                     
                     $markersByCat = '';
                     $pointByCat = '';
