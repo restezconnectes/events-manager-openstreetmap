@@ -3,7 +3,7 @@
 Plugin Name: Events Manager OpenStreetMap
 Plugin URI: https://madeby.restezconnectes.fr/project/events-manager-openstreetmap/
 Description: Events Manager OpenStreetMap is a WordPress plugin for Events Manager. It allows you to replace Google Maps to OpenStreetMap on all your event locations.
-Version: 2.0.0
+Version: 2.0.2
 Depends: Events Manager
 Author: Florent Maillefaud
 Author URI: https://restezconnectes.fr
@@ -23,7 +23,7 @@ define( 'EMOSM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'EMOSM_PLUGIN_URL', plugins_url().'/'.strtolower('events-manager-openstreetmap').'/');
 define( 'EMOSM_TXT_DOMAIN', 'events-manager-openstreetmap');
 
-if( !defined( 'EMOSM_VERSION' )) { define( 'EMOSM_VERSION', '2.0.0' ); }
+if( !defined( 'EMOSM_VERSION' )) { define( 'EMOSM_VERSION', '2.0.2' ); }
 
 require EMOSM_DIR . 'classes/class.php';
 require EMOSM_DIR . 'includes/map.php';

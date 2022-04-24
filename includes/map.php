@@ -214,7 +214,9 @@ function em_openstreetmap_map( $atts ) {
                 id: 'mapbox/streets-v11',
                 tileSize: 512,
                 zoomOffset: -1
-			}),";
+			}),
+            
+            ";
 
         if( isset($map_latitude) && $map_latitude!='' && $map_longitude!='' ) {
     $map .= "latlng = L.latLng(".esc_html($map_latitude).", ".esc_html($map_longitude)."); ";        

@@ -12,9 +12,15 @@ File events-manager-openstreetmap.pot available
 
 <a href="https://demo.restezconnectes.fr/events/evenement/">[Demo Here]</a>
 
-Current Version:  2.0.0
+Current Version:  2.0.2
 
 == Changelog ==
+
+-- 2.0.2 --
+* Bugs fixed generate JS files
+
+-- 2.0.1 --
+* Bugs fixed categories events map
 
 -- 2.0.0 --
 * WARNING: It's a major version. Be carefull before update plugin
@@ -48,4 +54,4 @@ Current Version:  2.0.0
 ![Settings Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-2.png)
 ![Event view](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-3.png)
 ![Admin Settings Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-4.png)
-![Categories Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-5.png)
+![Categories Events Map](https://madeby.restezconnectes.fr/plugins/events-manager-openstreetmap/screenshot-5.png)

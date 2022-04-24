@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/RestezConnectes/
 Tags: Events Manager, module, OpenStreetMap, Map
 Requires at least: 3.0
 Tested up to: 5.9
-Stable tag: 2.0.0
+Stable tag: 2.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -36,6 +36,12 @@ File events-manager-openstreetmap.pot available
 5. Categories Events Map
 
 == Changelog ==
+
+= 2.0.2 =
+* Bugs fixed generate JS files
+
+= 2.0.1 =
+* Bugs fixed categories events map
 
 = 2.0.0 =
 * WARNING: It's a major version. Be carefull before update plugin

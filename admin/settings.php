@@ -20,8 +20,9 @@ if( isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verif
     if( isset($_POST["em_openstreetmap_setting"]) ) {        
         update_option('em_openstreetmap_setting', $_POST["em_openstreetmap_setting"]);
     }
-    $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', '', 1);
-    $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('location', '', '', 1);
+    $genereEventsFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', '', 1);
+    $genereLocationFile = EM_Openstreetmap_Class::em_openstreetmap_generate('location', '', '', 1);
+    $genereCategorieFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', '', 1);
 
     $options_saved = true;
     echo '<div id="message" class="updated fade"><p><strong>'.__('Seetings are saved!', EMOSM_TXT_DOMAIN).'</strong></p></div>';
