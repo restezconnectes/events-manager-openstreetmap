@@ -529,7 +529,7 @@ function em_openstreetmap_map_categories( $atts ) {
         $map = "<style>#map".$nameMap." {height:".esc_html($height)."px;}</style>";
     }
 
-    $map = "je suis là<div id=\"map".$nameMap."\"></div>
+    $map = "<div id=\"map".$nameMap."\"></div>
     <ul class=\"catlayers\"></ul>";
 
     $map .= "<script src=\"".str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $genereFile)."\"></script>
