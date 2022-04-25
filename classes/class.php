@@ -223,16 +223,22 @@ class EM_Openstreetmap_Class {
 
     public static function _em_openstreetmap_desactivate() {
 
-        delete_option('em_openstreetmap_setting');
+        wp_delete_post( get_option('em_openstreetmap_location_page', true), false);
+        wp_delete_post( get_option('em_openstreetmap_events_page', true), false);
 
     }
 
     public static function _em_openstreetmap_uninstall() {
 
         delete_option('em_openstreetmap_version');
+        delete_option('em_openstreetmap_setting');
+
+        wp_delete_post( get_option('em_openstreetmap_location_page', true), true);
+        wp_delete_post( get_option('em_openstreetmap_events_page', true), true);
+
         delete_option('em_openstreetmap_location_page');
         delete_option('em_openstreetmap_events_page');
-        delete_option('em_openstreetmap_setting');
+
     }
 
     function em_openstreetmap_admin_menu() {
