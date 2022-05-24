@@ -17,9 +17,36 @@ if( isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verif
         update_option('em_openstreetmap_events_cat_page', $_POST["em_page_events_cat_idmap"]);
     }
 
-    if( isset($_POST["em_openstreetmap_setting"]) ) {        
-        update_option('em_openstreetmap_setting', $_POST["em_openstreetmap_setting"]);
+    // UPDATE SETTINGS
+    if( get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting') ); }
+    $paramTemp = get_option('em_openstreetmap_setting');
+    // Je recupère le tableau temporaire des données
+    if( isset($paramTemp) && !empty($paramTemp) ) {
+        foreach($paramTemp as $variable=>$value) {           
+            // pour chaque clé du tableau de regarde si elle existe déjà
+            if ( array_key_exists($variable, $paramTemp) ) {
+                // Si la clé est la même que venant du post je la change
+                if( isset($tabPost[$variable]) ) { 
+                    array_fill_keys($paramTemp, sanitize_textarea_field($tabPost[$variable]));
+                }
+            }
+        }
     }
+    
+    if( isset($paramTemp) && is_array($paramTemp) ) {
+            // Si le tableau temporaire existe je le fusionne avec les données $_POST["em_openstreetmap_setting"]
+        $paramData = array_merge($paramTemp, $_POST["em_openstreetmap_setting"]);
+    } else {
+        // Sinon je garde le $_POST["em_openstreetmap_setting"] en cours
+        $paramData = $tabPost;
+    }
+    
+    if( update_option('em_openstreetmap_setting', $paramData) ) {
+        $options_saved = true;
+    }
+    // END UPDATE STTINGS
+
+
     $genereEventsFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', '', 1);
     $genereLocationFile = EM_Openstreetmap_Class::em_openstreetmap_generate('location', '', '', 1);
     $genereCategorieFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', '', 1);
@@ -31,6 +58,9 @@ if( isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verif
 // Récupère les paramètres sauvegardés
 if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
 $paramMMode = get_option('em_openstreetmap_setting');
+
+if(get_option('em_openstreetmap_css')) { extract(get_option('em_openstreetmap_css')); }
+$paramCss = get_option('em_openstreetmap_css');
 
 $admin_color = get_user_option( 'admin_color', get_current_user_id() );
 $colors      = $_wp_admin_css_colors[$admin_color]->colors;
@@ -118,8 +148,8 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             ?><br /><br />
                             <strong><?php _e( 'Select Cat Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
                             <?php
-                            if( get_option('em_openstreetmap_events_cat_page' ) ) {
-                                $idSelectPageCat = get_option('em_openstreetmap_events_cat_page' );
+                            if( get_option('em_openstreetmap_categories_page' ) ) {
+                                $idSelectPageCat = get_option('em_openstreetmap_categories_page' );
                                 $linkPageCat = ' (<a href="'.get_the_permalink($idSelectPageCat).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
                                 $idSelectPageCat = 0;
@@ -280,52 +310,10 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             
                             <br /><br /><hr /><br />
                             <strong><?php _e('Tile for Location & Events Map:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
-                            <input name="em_openstreetmap_setting[tile]" size="100" class="inputmap" value="<?php if( isset($paramMMode['tile']) && $paramMMode['tile'] !='' ) { echo $paramMMode['tile']; } else { echo 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; } ?>" />
+                            <input name="em_openstreetmap_setting[tile]" size="100" class="inputmap" value="<?php if( isset($paramMMode['tile']) && $paramMMode['tile'] !='' ) { echo esc_html($paramMMode['tile']); } else { echo 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'; } ?>" />
                             <br /><br /><hr /><br />
                             <strong><?php _e('Custom CSS:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
-                            <?php 
-                            if( empty($paramMMode['css']) || $paramMMode['css'] == '' ) {
-$paramMMode['css'] = '/* CSS for location map */
-.em-osm-thumbnail{float:left;width:30%;padding-right:2em;}
-.em-osm-content{float:left;width:60%;text-align:center;}
-.em-osm-readmore{padding:0.5em;text-align:center;background: #333333;color: #ffffff;}
-.em-osm-readmore a:link, .em-osm-readmore a:hover, .em-osm-readmore a:visited{color: #ffffff;}
-/* CSS for events map */
-.em-osm-thumbnail{float:left;width:30%;padding-right:2em;}
-.em-osm-event-content{float:left;width:60%;text-align:center;}
-.em-osm-event-readmore{padding:0.5em;text-align:center;background: #333333;color: #ffffff;}
-.em-osm-event-readmore a:link, .em-osm-event-readmore a:hover, .em-osm-event-readmore a:visited{color: #ffffff;}
-/* CSS for single event map */
-.em-osm-single-thumbnail{float:left;width:30%;padding-right:2em;}
-.em-osm-single-content{text-align:center;}
-.em-osm-single-readmore{padding:0.5em;text-align:center;background: #333333;color: #ffffff;}
-.em-osm-single-readmore a:link, .em-osm-single-readmore a:hover, .em-osm-single-readmore a:visited{color: #ffffff;}
-/* css to customize Leaflet default styles events  */
-.customevent .leaflet-popup-tip,
-.customevent .leaflet-popup-content-wrapper {background: #ffffff;color: #333333;width:400px;}
-#event-map {width:100%;margin: 10px 0px 10px 0px;overflow:hidden;position:relative;margin-left: auto;margin-right: auto; }
-.btn-markers {padding: 3px 5px;border: 1px solid #333;margin-top: 5px;margin-bottom: 5px;margin-right:5px;width: 70px;cursor: pointer;}
-/* Legend categories*/
-.catlayers {display: flex;flex-wrap: wrap;justify-content: center;padding: 10px;gap: 10px;}
-label {display: flex;align-items: center;gap: 8px;text-transform: uppercase;cursor: pointer;}
-.contentitem input {appearance: none;width: 20px;height: 20px;border: 2px solid #555555;background-clip: content-box;padding: 3px;cursor: pointer;}
-.contentitem input:checked {background-color: #525252;}
-ul {margin: 10px;padding: 0;list-style-type: none;}
-.layer-element {list-style: none;}
-/* CSS for categories events map */
-.em-osm-cat-thumbnail{float:left;width:30%;padding-right:2em;}
-.em-osm-cat-content{text-align:center;}
-.em-osm-cat-readmore{padding:0.5em;text-align:center;background: #333333;color: #ffffff;}
-.em-osm-cat-readmore a:link, .em-osm-single-readmore a:hover, .em-osm-single-readmore a:visited{color: #ffffff;}
-/* Back to home button */
-.back-to-home {position: absolute;top: 80px;left: 10px;width: 26px;height: 26px;z-index: 999;cursor: pointer;display: none;padding: 5px;background: #fff;border-radius: 4px;box-shadow: 0 1px 5px rgb(0 0 0 / 65%);}
-.leaflet-touch .back-to-home {width: 34px;height: 34px;}
-    
-';
-                            }
-                            ?>
                             <TEXTAREA NAME="em_openstreetmap_setting[css]" id="emosmstyle" COLS=50 ROWS=2><?php if( isset($paramMMode['css']) && $paramMMode['css']!='' ) { echo esc_textarea(stripslashes($paramMMode['css'])); }  ?></TEXTAREA>
-                            
                             <br /><br /><hr /><br />
                             <strong><?php _e('Customs Values for Shortcodes Map:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
                             <table style="width:100%">
@@ -416,6 +404,9 @@ ul {margin: 10px;padding: 0;list-style-type: none;}
                                     <td><a href="https://www.paypal.com/paypalme/RestezConnectes/"><img src="<?php echo EMOSM_PLUGIN_URL.'images/qrcode.png'; ?>" width="200" /></a><td>
                                 </tr>
                             </table>
+                            <br /><br /><hr /><br />
+                            <strong><?php _e('Delete all settings at plugin desativate?', EMOSM_TXT_DOMAIN); ?></strong><p></p>
+                            <input type="radio" name="em_openstreetmap_setting[delete]" value="yes" <?php if( isset($paramMMode['delete']) && $paramMMode['delete'] == 'yes' ) { echo "checked"; } ?> /> <?php _e('Yes', EMOSM_TXT_DOMAIN); ?> <input type="radio" name="em_openstreetmap_setting[delete]" value="no" <?php if( empty($paramMMode['delete']) || (isset($paramMMode['delete']) && $paramMMode['delete'] == 'no') ) { echo "checked"; } ?> /> <?php _e('No', EMOSM_TXT_DOMAIN); ?>
                             <br /><br /><hr /><br />
                             <?php submit_button(); ?>
                         </td>

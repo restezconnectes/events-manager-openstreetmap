@@ -15,7 +15,7 @@ class EM_Openstreetmap_Class {
         }
         $this->plugin_file = EM_openstreetmap::get_plugin_file();
 
-        register_deactivation_hook(__FILE__, 'em_openstreetmap_uninstall');
+        //register_deactivation_hook(__FILE__, 'em_openstreetmap_uninstall');
         add_action( 'admin_menu', array( $this, 'em_openstreetmap_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'em_openstreetmap_admin_head') );
         add_action( 'wp_enqueue_scripts', array( $this, 'em_openstreetmap_assets'), 1 );
@@ -35,16 +35,7 @@ class EM_Openstreetmap_Class {
     // parm order: value_to_display, $column_name, $tag->term_id
     // filter: manage_{$taxonomy}_custom_column
     function add_manage_cat_column_icon( $value, $column_name, $tax_id ){
-        // var_dump( $column_name );
-        // var_dump( $value );
-        // var_dump( $tax_id );
 
-        // for multiple custom column, you may consider using the column name to distinguish
-
-        // although If clause is working, Switch is a more generic and well structured approach for multiple columns
-        // if ($column_name === 'header_name') {
-            // echo '1234';
-        // }
         switch( $column_name ) {
             case 'em_osm_icon':
                 // your code here
@@ -86,7 +77,7 @@ class EM_Openstreetmap_Class {
                 $customIcon = get_post_meta($post_id, '_location_custom_icon', true);
                 
                 // Si il y un icon custom, on vérifie si il a seclectionné Custom Icon
-                $urlIcon = EMOSM_PLUGIN_URL.'images/markers/'.$icon.'.png';
+                $urlIcon = esc_url( plugins_url( '../images/markers/'.$icon.'.png',  __FILE__ ));
 
                 // On va chercher l'icon de la categorie d'evenement
                 if( isset($mapIcon) && $mapIcon=="none" ) { 
@@ -106,7 +97,7 @@ class EM_Openstreetmap_Class {
                 $mapIcon = get_post_meta($post_id, '_location_osm_map_icon', true);
                 if( isset($mapIcon) && $mapIcon != '') { $icon = $mapIcon; } else { $icon = 'default'; }
                 
-                $urlIcon = EMOSM_PLUGIN_URL.'images/markers/'.$icon.'.png';
+                $urlIcon = esc_url( plugins_url( '../images/markers/'.$icon.'.png',  __FILE__ ));
 
                 // On va chercher l'icon de la categorie d'evenement
                 if( isset($mapIcon) && $mapIcon=="none" ) { 
@@ -148,10 +139,10 @@ class EM_Openstreetmap_Class {
         if( $post->ID == $em_page_events_id) { $type ='events'; }
 
         if( isset($type) ) {
-            echo '<script src="'.str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $this->em_openstreetmap_generate($type)).'?ver='.EMOSM_VERSION.''.rand().'"></script>';
+            echo '<script src="'.esc_js(str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $this->em_openstreetmap_generate($type))).'?ver='.EMOSM_VERSION.''.rand().'"></script>';
         }
-        if( isset($paramMMode['css']) && $paramMMode['css'] != '' ) {
-            echo "<style id='emosm-css' type='text/css'>".$paramMMode['css']."</style>";
+        if( isset($paramCss) && $paramCss != '' ) {
+            echo "<style id='emosm-css' type='text/css'>".esc_html($paramMMode['css'])."</style>";
         }
     }
 
@@ -162,20 +153,20 @@ class EM_Openstreetmap_Class {
         // If you're not including an image upload then you can leave this function call out
         if( $post_type == 'location') {
 
-            wp_enqueue_style( 'emosm-leafletcss', EMOSM_PLUGIN_URL.'styles/leaflet.min.css' );
-            wp_enqueue_script( 'emosm-leafletjs', EMOSM_PLUGIN_URL.'scripts/leaflet.min.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_style( 'emosm-markercluster', EMOSM_PLUGIN_URL.'styles/MarkerCluster.css' );
-            wp_enqueue_style( 'emosm-markercluster-default', EMOSM_PLUGIN_URL.'styles/MarkerCluster.Default.css' );
-            wp_enqueue_script( 'emosm-markerclusterjs', EMOSM_PLUGIN_URL.'scripts/leaflet.markercluster.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_script( 'emosm-esrileafletjs', EMOSM_PLUGIN_URL.'scripts/esri-leaflet.min.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_script( 'emosm-leafletgeocoderjs', EMOSM_PLUGIN_URL.'scripts/esri-leaflet-geocoder.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_style( 'emosm-leafletgeocodertcss', EMOSM_PLUGIN_URL.'styles/esri-leaflet-geocoder.css' );
-            wp_enqueue_script( 'emosm-leafletprovidersjs', EMOSM_PLUGIN_URL.'scripts/leaflet-providers.js', 'jquery', EMOSM_VERSION);
+            wp_enqueue_style( 'emosm-leafletcss', plugins_url( '../styles/leaflet.min.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-leafletjs', plugins_url( '../scripts/leaflet.min.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_style( 'emosm-markercluster', plugins_url( '../styles/MarkerCluster.css',  __FILE__ ) );
+            wp_enqueue_style( 'emosm-markercluster-default', plugins_url( '../styles/MarkerCluster.Default.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-markerclusterjs', plugins_url( '../scripts/leaflet.markercluster.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_script( 'emosm-esrileafletjs', plugins_url( '../scripts/esri-leaflet.min.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_script( 'emosm-leafletgeocoderjs', plugins_url( '../scripts/esri-leaflet-geocoder.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_style( 'emosm-leafletgeocodertcss', plugins_url( '../styles/esri-leaflet-geocoder.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-leafletprovidersjs', plugins_url( '../scripts/leaflet-providers.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
 
             wp_enqueue_script('media-upload');
             wp_enqueue_script('thickbox');
 
-            wp_register_script('em-upload', EMOSM_PLUGIN_URL.'scripts/em-script.js', array('jquery','media-upload','thickbox'));
+            wp_register_script('em-upload', plugins_url( '../scripts/em-script.js',  __FILE__ ), array('jquery','media-upload','thickbox'));
             wp_enqueue_script('em-upload');
 
             // If you're not including an image upload then you can leave this function call out
@@ -197,47 +188,64 @@ class EM_Openstreetmap_Class {
         $post_type = get_post_type( $post );
         $em_page_location_id = get_option('em_openstreetmap_location_page');
         $em_page_events_id = get_option('em_openstreetmap_events_page');
-        $em_page_cat_id = get_option('em_openstreetmap_events_cat_page');
+        $em_page_cat_id = get_option('em_openstreetmap_categories_page');
 
         // If you're not including an image upload then you can leave this function call out
-        if( (!empty($post_type) && $post_type == 'location' || $post_type == 'event') || $post->ID == $em_page_location_id || $post->ID == $em_page_events_id || $post->ID == $em_page_cat_id) {
+        if( (!empty($post_type) && $post_type == 'location' || $post_type == 'event') || (isset($em_page_location_id) && $em_page_location_id>=1 && $post->ID == $em_page_location_id) || (isset($em_page_events_id) && $em_page_events_id>=1 && $post->ID == $em_page_events_id) || (isset($em_page_cat_id) && $em_page_cat_id>=1 && $post->ID == $em_page_cat_id) ) {
             
             // Déclarer un autre fichier CSS
-            wp_enqueue_style( 'emosm-leaflet_css', EMOSM_PLUGIN_URL.'styles/leaflet.min.css', array(), EMOSM_VERSION );
+            wp_enqueue_style( 'emosm-leaflet_css', plugins_url( '../styles/leaflet.min.css',  __FILE__ ), array(), EMOSM_VERSION );
             // Déclarer le JS
-            wp_enqueue_script( 'emosm_leaflet_js', EMOSM_PLUGIN_URL.'scripts/leaflet.min.js', array( 'jquery' ), EMOSM_VERSION, false );
-            wp_enqueue_style( 'emosm-markercluster', EMOSM_PLUGIN_URL.'styles/MarkerCluster.css' );
-            wp_enqueue_style( 'emosm-markercluster-default', EMOSM_PLUGIN_URL.'styles/MarkerCluster.Default.css' );
-            wp_enqueue_script( 'emosm-markerclusterjs', EMOSM_PLUGIN_URL.'scripts/leaflet.markercluster.min.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_script( 'emosm-esrileafletjs', EMOSM_PLUGIN_URL.'scripts/esri-leaflet.min.js', 'jquery', EMOSM_VERSION);
-            wp_enqueue_script( 'emosm-providers', EMOSM_PLUGIN_URL.'scripts/leaflet-providers.js', array( 'jquery' ), EMOSM_VERSION, false );
-            wp_enqueue_style( 'emosm-stylemap', EMOSM_PLUGIN_URL.'styles/style.min.css' );
-            wp_enqueue_script( 'emosm-minimap', EMOSM_PLUGIN_URL.'scripts/Control.MiniMap.min.js', array( 'jquery' ), EMOSM_VERSION, false );
-            wp_enqueue_style( 'emosm-minimap-css', EMOSM_PLUGIN_URL.'styles/Control.MiniMap.css' );
-            wp_enqueue_script( 'emosm-leafletgeocoderjs', EMOSM_PLUGIN_URL.'scripts/esri-leaflet-geocoder.js', array( 'jquery' ), EMOSM_VERSION);
-            wp_enqueue_style( 'emosm-leafletgeocodertcss', EMOSM_PLUGIN_URL.'styles/esri-leaflet-geocoder.min.css' );
+            wp_enqueue_script( 'emosm_leaflet_js', plugins_url( '../scripts/leaflet.min.js',  __FILE__ ), array( 'jquery' ), EMOSM_VERSION, false );
+            wp_enqueue_style( 'emosm-markercluster', plugins_url( '../styles/MarkerCluster.css',  __FILE__ ) );
+            wp_enqueue_style( 'emosm-markercluster-default', plugins_url( '../styles/MarkerCluster.Default.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-markerclusterjs', plugins_url( '../scripts/leaflet.markercluster.min.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_script( 'emosm-esrileafletjs', plugins_url( '../scripts/esri-leaflet.min.js',  __FILE__ ), 'jquery', EMOSM_VERSION);
+            wp_enqueue_script( 'emosm-providers', plugins_url( '../scripts/leaflet-providers.js',  __FILE__ ), array( 'jquery' ), EMOSM_VERSION, false );
+            wp_enqueue_style( 'emosm-stylemap', plugins_url( '../styles/style.min.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-minimap', plugins_url( '../scripts/Control.MiniMap.min.js',  __FILE__ ), array( 'jquery' ), EMOSM_VERSION, false );
+            wp_enqueue_style( 'emosm-minimap-css', plugins_url( '../styles/Control.MiniMap.css',  __FILE__ ) );
+            wp_enqueue_script( 'emosm-leafletgeocoderjs', plugins_url( '../scripts/esri-leaflet-geocoder.js',  __FILE__ ), array( 'jquery' ), EMOSM_VERSION);
+            wp_enqueue_style( 'emosm-leafletgeocodertcss', plugins_url( '../styles/esri-leaflet-geocoder.min.css',  __FILE__ ) );
 
         }
 
     }
 
-    public static function _em_openstreetmap_desactivate() {
+    public static function em_openstreetmap_desactivate() {
 
-        wp_delete_post( get_option('em_openstreetmap_location_page', true), false);
-        wp_delete_post( get_option('em_openstreetmap_events_page', true), false);
+        // Récupère les paramètres sauvegardés
+        if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
+        $paramMMode = get_option('em_openstreetmap_setting');
+
+        if( isset($paramMMode['delete']) && $paramMMode['delete'] == 'yes' ) {
+
+            delete_option('em_openstreetmap_version');
+            delete_option('em_openstreetmap_setting');
+    
+            wp_delete_post( get_option('em_openstreetmap_location_page', true), true);
+            wp_delete_post( get_option('em_openstreetmap_events_page', true), true);
+            wp_delete_post( get_option('em_openstreetmap_categories_page', true), false);
+    
+            delete_option('em_openstreetmap_location_page');
+            delete_option('em_openstreetmap_events_page');
+            delete_option('em_openstreetmap_categories_page');
+        }
 
     }
 
-    public static function _em_openstreetmap_uninstall() {
+    public static function em_openstreetmap_uninstall() {
 
         delete_option('em_openstreetmap_version');
         delete_option('em_openstreetmap_setting');
 
         wp_delete_post( get_option('em_openstreetmap_location_page', true), true);
         wp_delete_post( get_option('em_openstreetmap_events_page', true), true);
+        wp_delete_post( get_option('em_openstreetmap_categories_page', true), false);
 
         delete_option('em_openstreetmap_location_page');
         delete_option('em_openstreetmap_events_page');
+        delete_option('em_openstreetmap_categories_page');
 
     }
 
@@ -251,8 +259,8 @@ class EM_Openstreetmap_Class {
         // Add submenu pour Event Manager
         add_submenu_page( 'edit.php?post_type=event', __('OpenStreetMap', EMOSM_TXT_DOMAIN), __('OpenStreetMap', EMOSM_TXT_DOMAIN), 'manage_options', 'em_openstreetmap_settings_page', array( $this, 'em_openstreetmap_settings_page') );
 
-        $em_page_location_id = get_option('em_openstreetmap_location_page'); // Les id des pages sont en mémoire
-		if( empty($em_page_location_id) ) { // Test si elles existent pour ne pas les recréer
+        $em_page_location_id = get_option('em_openstreetmap_location_page', false); // Les id des pages sont en mémoire
+		if( isset($em_page_location_id) &&  $em_page_location_id == false ) { // Test si elles existent pour ne pas les recréer
 			
 			$post_data = array(
 				'post_status' => 'publish',
@@ -261,15 +269,15 @@ class EM_Openstreetmap_Class {
 				'post_excerpt' => '',
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
-				'post_title' => __('Locations Map', 'events-manager-openstreetmap'),
+				'post_title' => __('Locations Map', EMOSM_TXT_DOMAIN),
 				'menu_order' => 0
 			);
 			$em_page_location_id = wp_insert_post($post_data, false);
-			update_option('em_openstreetmap_location_page', $em_page_location_id);
+			add_option('em_openstreetmap_location_page', $em_page_location_id);
 		}
 
-        $em_pages_events_id = get_option('em_openstreetmap_events_page'); // Les id des pages sont en mémoire
-		if( empty($em_pages_events_id) ) { // Test si elles existent pour ne pas les recréer
+        $em_pages_events_id = get_option('em_openstreetmap_events_page', false); // Les id des pages sont en mémoire
+		if( isset($em_pages_events_id) && $em_pages_events_id == false ) { // Test si elles existent pour ne pas les recréer
 			
 			$post_data = array(
 				'post_status' => 'publish',
@@ -278,11 +286,27 @@ class EM_Openstreetmap_Class {
 				'post_excerpt' => '',
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
-				'post_title' => __('Events Map', 'events-manager-openstreetmap'),
+				'post_title' => __('Events Map', EMOSM_TXT_DOMAIN),
 				'menu_order' => 0
 			);
 			$em_pages_events_id = wp_insert_post($post_data, false);
-			update_option('em_openstreetmap_events_page', $em_pages_events_id);
+			add_option('em_openstreetmap_events_page', $em_pages_events_id);
+		}
+        $em_pages_cat_id = get_option('em_openstreetmap_categories_page', false); // Les id des pages sont en mémoire
+		if( isset($em_pages_cat_id) && $em_pages_cat_id == false ) { // Test si elles existent pour ne pas les recréer
+			
+			$post_data = array(
+				'post_status' => 'publish',
+				'post_type' => 'page',
+				'post_content' => '[em_osmap_categories]',
+				'post_excerpt' => '',
+				'comment_status' => 'closed',
+				'ping_status'    => 'closed',
+				'post_title' => __('Categories Map', EMOSM_TXT_DOMAIN),
+				'menu_order' => 0
+			);
+			$em_pages_cat_id = wp_insert_post($post_data, false);
+			add_option('em_openstreetmap_categories_page', $em_pages_cat_id);
 		}
 
         if ( isset($_GET['page']) && $_GET['page']=='em_openstreetmap_settings_page' ) {
@@ -329,14 +353,6 @@ class EM_Openstreetmap_Class {
     
     function em_openstreetmap_cat() {
         global $wpdb;
-
-    }
-
-    function em_openstreetmap_uninstall() {
-    
-        global $wpdb;
-
-        if(get_option('em_openstreetmap_version')) { delete_option('em_openstreetmap_version'); }
 
     }
     
@@ -453,11 +469,11 @@ class EM_Openstreetmap_Class {
         if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
         $paramMMode = get_option('em_openstreetmap_setting');
 
-        if( isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = $paramMMode['latitude']; } else {  $latitude = 47.4; }
-        if( isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = $paramMMode['longitude']; } else { $longitude = 1.6; }
-        if( isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = $paramMMode['zoom']; } else { $zoom = 5.5; }
-        if( isset($paramMMode['tile']) && $paramMMode['tile'] != '') { $tile = $paramMMode['tile']; } else { $tile = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
-        if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] != '') { $icon = $paramMMode['map_icon']; } else { $icon = 'default'; }
+        if( isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = esc_attr($paramMMode['latitude']); } else {  $latitude = 47.4; }
+        if( isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = esc_attr($paramMMode['longitude']); } else { $longitude = 1.6; }
+        if( isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = esc_attr($paramMMode['zoom']); } else { $zoom = 5.5; }
+        if( isset($paramMMode['tile']) && $paramMMode['tile'] != '') { $tile = esc_url($paramMMode['tile']); } else { $tile = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
+        if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] != '') { $icon = esc_attr($paramMMode['map_icon']); } else { $icon = 'default'; }
 
         if( isset($paramMMode["map_icon_size_width"]) && $paramMMode['map_icon_size_width'] != '' ) { $icon_width = 33; }
         if( isset($paramMMode["map_icon_size_height"]) && $paramMMode['map_icon_size_height'] != '' ) { $icon_height = 44; }
@@ -504,10 +520,10 @@ class EM_Openstreetmap_Class {
                     
                     // Si il y un icon custom, on vérifie si il a seclectionné Custom Icon
                     if( $icon == 'custom' && (isset($customIcon) && $customIcon != '') ) {
-                        $urlIcon = $customIcon;
+                        $urlIcon = esc_url($customIcon);
                     } else {
                         if( $icon == 'custom' ) { $icon = 'default'; }
-                        $urlIcon = EMOSM_PLUGIN_URL.'images/markers/'.$icon.'.png';
+                        $urlIcon = esc_url(EMOSM_PLUGIN_URL.'images/markers/'.$icon.'.png');
                     }
                     
                     $address = $EM_Location->location_address.'<br />'. $EM_Location->location_postcode.' '. $EM_Location->location_town;
@@ -787,6 +803,7 @@ var options = {
     center: latlng,
     zoom: '.$zoom.',
     layers: [tiles],
+    tap:false,
 }
 
 var baseLayers = {
