@@ -21,8 +21,8 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             $EM_Location = $EM_Event->get_location();
         }        
 
-        $latitude = get_post_meta($post->ID, '_location_latitude', true);
-        $longitude = get_post_meta($post->ID, '_location_longitude', true);
+        $latitude = get_post_meta(wp_kses_post($post->ID), '_location_latitude', true);
+        $longitude = get_post_meta(wp_kses_post($post->ID), '_location_longitude', true);
 
         if( isset($EM_Location->location_latitude) && $EM_Location->location_latitude!='' ) {
             
@@ -41,29 +41,29 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             $town = $EM_Location->location_town; } else { $town = ''; }
 
 
-            $mapHeight = get_post_meta($post->ID, '_location_osm_map_height', true);
+            $mapHeight = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_height', true);
             if( isset($mapHeight) && $mapHeight!='' ) { $height = esc_attr($mapHeight); } else { $height = '250'; }
 
-            $mapLayer = get_post_meta($post->ID, '_location_osm_map_layer', true);
+            $mapLayer = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_layer', true);
             if( isset($mapLayer) && $mapLayer!='' ) { $layer = esc_html($mapLayer); } else { $layer = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
 
-            $mapZoom = get_post_meta($post->ID, '_location_osm_map_zoom', true);
+            $mapZoom = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_zoom', true);
             if( isset($mapZoom) && $mapZoom!='' ) { $zoom = esc_html($mapZoom); } else { $zoom = 13; }
 
-            $mapIcon = get_post_meta($post->ID, '_location_osm_map_icon', true);
+            $mapIcon = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_icon', true);
             if( (isset($mapIcon) && $mapIcon=="") || empty($mapIcon) ) { $mapIcon = 'default'; }
-            $urlIcon = EMOSM_PLUGIN_URL.'images/markers/'.$mapIcon.'.png';
+            $urlIcon = esc_url(EMOSM_PLUGIN_URL.'images/markers/'.esc_html($mapIcon).'.png');
             
             // On va chercher l'icon de la categorie d'evenement
             if( isset($mapIcon) && $mapIcon=="none" ) { 
                 $EM_Categories = $EM_Event->get_categories();
                 if( $EM_Categories ) {
                     foreach( $EM_Categories AS $EM_Category){
-                        $iconId = get_term_meta ( $EM_Category->term_id, 'em-categories-icon-id', true );
+                        $iconId = get_term_meta (esc_html($EM_Category->term_id), 'em-categories-icon-id', true);
                         if( $iconId !='' && is_numeric($iconId) ) {
                             $urlIcon = wp_get_attachment_url($iconId);
                         } else {
-                            $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png';
+                            $urlIcon = esc_url(EMOSM_PLUGIN_URL.'images/markers/default.png');
                             
                         }
                     }
@@ -78,7 +78,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             }
             if( isset($marker_icon_width) && $marker_icon_width=="") { $marker_icon_width = 33; }
             if( isset($marker_icon_height) && $marker_icon_height=="") { $marker_icon_height = 44; }
-            if ( $urlIcon == '' ) { $urlIcon = EMOSM_PLUGIN_URL.'images/markers/default.png'; }
+            if ( $urlIcon == '' ) { $urlIcon = esc_url(EMOSM_PLUGIN_URL.'images/markers/default.png'); }
 
             $EM_Location = em_get_location($EM_Event->location_id);
 
@@ -139,10 +139,10 @@ function em_openstreetmap_map( $atts ) {
     if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
     $paramMMode = get_option('em_openstreetmap_setting');
 
-    if( isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = esc_attr($paramMMode['latitude']); } else {  $latitude = 47.4; }
-    if( isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = esc_attr($paramMMode['longitude']); } else { $longitude = 1.6; }
-    if( isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = esc_attr($paramMMode['zoom']); } else { $zoom = 5.5; }
-    if( isset($paramMMode['tile']) && $paramMMode['tile'] != '') { $tile = esc_html($paramMMode['tile']); } else { $tile = 'https://tile.openstreetmap.org/${z}/${x}/${y}.png'; }
+    if(isset($paramMMode['latitude']) && $paramMMode['latitude'] != '') { $latitude = esc_attr($paramMMode['latitude']); } else {  $latitude = 47.4; }
+    if(isset($paramMMode['longitude']) && $paramMMode['longitude'] != '') { $longitude = esc_attr($paramMMode['longitude']); } else { $longitude = 1.6; }
+    if(isset($paramMMode['zoom']) && $paramMMode['zoom'] != '') { $zoom = esc_attr($paramMMode['zoom']); } else { $zoom = 5.5; }
+    if(isset($paramMMode['tile']) && $paramMMode['tile'] != '' && is_numeric($paramMMode['tile'])) { $tile = get_mapTile($paramMMode['tile']); } else { $tile = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
     if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] != '') { $icon = esc_html($paramMMode['map_icon']); } else { $icon = 'default'; }
 
     if( isset($paramMMode["map_icon_size_width"]) && $paramMMode['map_icon_size_width'] != '' ) { $icon_width = 33; }
@@ -159,7 +159,7 @@ function em_openstreetmap_map( $atts ) {
             'country' => 0,
             'baseLayers' => 1,
             'search' => 1,
-            'icon_url' => ''.esc_url( plugins_url( '../images/markers/'.$icon.'.png', __FILE__ ) ).'',
+            'icon_url' => ''.esc_url(EMOSM_URL.'images/markers/'.$icon.'.png').'',
             'icon_width' => 33,
             'icon_height' => 44,
             'readmore' => __( 'Read more', EMOSM_TXT_DOMAIN),
@@ -252,7 +252,7 @@ if( $search == 1) {
     $map .= "
         /// ------ GEOCODER
         var IconSearch = L.icon({
-            iconUrl: '".esc_url( plugins_url( '../images/iconsearch.png', __FILE__ ) )."',
+            iconUrl: '".esc_url(EMOSM_URL.'images/iconsearch.png')."',
             iconSize:     [32, 48],
             iconAnchor:   [16, 48],
             popupAnchor:  [-3, -48],
@@ -385,6 +385,9 @@ if( $type == 'location' ) {
 		map.addLayer(markers);
 ";
     if( $home_button == 1 ) {
+        if ( wp_is_mobile() ) : 
+            
+        else :
         $map .= '
         /// ------ HOME BUTTON
         const lat = '.$latitude.';
@@ -451,13 +454,19 @@ if( $type == 'location' ) {
         }
         /// ------ 
         ';
+        endif;
     }
     if( $mini_map == 1 ) {
+        if ( wp_is_mobile() ) : 
+            $toggleDisplay = "false";
+        else :
+            $toggleDisplay = "true";
+        endif;
         $map .= "
         const attribution =
         '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
-        const osm2 = new L.TileLayer('".$tile."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
-        var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true }).addTo(map);
+        const osm2 = new L.TileLayer('".get_mapTile($paramMMode['tile'])."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
+        var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: ".esc_html($toggleDisplay)." }).addTo(map);
         ";
     }
 
@@ -503,7 +512,7 @@ function em_openstreetmap_map_categories( $atts ) {
             'country' => 0,
             'baseLayers' => 1,
             'search' => 1,
-            'icon_url' => ''.esc_url( plugins_url( '../images/markers/'.$icon.'.png', __FILE__ ) ).'',
+            'icon_url' => ''.esc_url(EMOSM_URL.'images/markers/'.$icon.'.png').'',
             'icon_width' => 33,
             'icon_height' => 44,
             'readmore' => __( 'Read more', EMOSM_TXT_DOMAIN),
@@ -549,7 +558,7 @@ function em_openstreetmap_map_categories( $atts ) {
     $map .= '
     /// ------ GEOCODER
     var IconSearch = L.icon({
-        iconUrl: "'.esc_url( plugins_url( '../images/iconsearch.png', __FILE__ ) ).'",
+        iconUrl: "'.esc_url(EMOSM_URL.'images/iconsearch.png').'",
         iconSize:     [32, 48],
         iconAnchor:   [16, 48],
         popupAnchor:  [-3, -48],
@@ -578,6 +587,11 @@ function em_openstreetmap_map_categories( $atts ) {
     ';
     }
     if( $home_button == 1 ) {
+
+        if ( wp_is_mobile() ) : 
+            
+        else :
+            
         $map .= '
     /// ------ HOME BUTTON
     const htmlTemplate =
@@ -642,14 +656,20 @@ function em_openstreetmap_map_categories( $atts ) {
     }
     /// ------ 
         ';
+        endif;
     }
 
     if( $mini_map == 1 ) {
+        if ( wp_is_mobile() ) : 
+            $toggleDisplay = "false";
+        else :
+            $toggleDisplay = "true";
+        endif;
         $map .= "
     const attribution =
     '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
-    const osm2 = new L.TileLayer('".$tile."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
-    var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true }).addTo(map);
+    const osm2 = new L.TileLayer('".get_mapTile(1)."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
+    var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: ".esc_html($toggleDisplay)." }).addTo(map);
     ";
     }
     $map .= "</script>";
@@ -658,3 +678,28 @@ function em_openstreetmap_map_categories( $atts ) {
     return $map;
 }
 add_shortcode( 'em_osmap_categories', 'em_openstreetmap_map_categories' );
+
+function get_mapTile($id) {
+    
+    if( empty($id) || $id =='' || !is_numeric($id) ) { return 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
+
+    // Récupère les paramètres sauvegardés
+    if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
+    $paramMMode = get_option('em_openstreetmap_setting');
+
+    if(isset($paramMMode['custom_tile']) && $paramMMode['custom_tile']!='') {
+        $customUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token='.esc_html($paramMMode['custom_tile']); 
+    } else { 
+        $customUrl = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png';
+    }
+
+    $tabTile = array(
+        1 => 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+        2 => 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+        3 => 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        4 => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        5 => 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+        6 => $customUrl
+    );
+    return $tabTile[$id];
+}

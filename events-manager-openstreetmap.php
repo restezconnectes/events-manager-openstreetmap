@@ -18,9 +18,9 @@ defined( 'ABSPATH' )
 	or die( 'No direct load ! ' );
 
 define( 'EMOSM_DIR', plugin_dir_path( __FILE__ ) );
-define( 'EMOSM_URL', plugin_dir_url( __FILE__ ) );
+define( 'EMOSM_URL', plugins_url('/', __FILE__) );
 define( 'EMOSM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'EMOSM_PLUGIN_URL', plugins_url().'/'.strtolower('events-manager-openstreetmap').'/');
+define( 'EMOSM_PLUGIN_URL', plugins_url().'/events-manager-openstreetmap/');
 define( 'EMOSM_TXT_DOMAIN', 'events-manager-openstreetmap');
 
 if( !defined( 'EMOSM_VERSION' )) { define( 'EMOSM_VERSION', '2.0.4' ); }

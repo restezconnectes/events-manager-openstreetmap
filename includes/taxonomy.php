@@ -64,7 +64,7 @@ public function load_media() {
  public function save_categories_icon ( $term_id, $tt_id ) {
 
   if( isset( $_POST['categoriescpt-icon-id'] ) && '' !== $_POST['categoriescpt-icon-id'] ){
-    $icon = $_POST['categoriescpt-icon-id'];
+    $icon = sanitize_text_field($_POST['categoriescpt-icon-id']);
     add_term_meta( $term_id, 'em-categories-icon-id', $icon, true );
   }
   $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', '', 1);
@@ -78,14 +78,14 @@ public function load_media() {
  public function update_categories_icon ( $term, $taxonomy ) { ?>
     <tr class="form-field term-group-wrap">
         <th scope="row">
-            <label for="categoriescpt-icon-id"><?php _e( 'Icon', EMOSM_TXT_DOMAIN ); ?></label>
+            <label for="categoriescpt-icon-id"><?php _e('Icon', EMOSM_TXT_DOMAIN); ?></label>
         </th>
         <td>
-        <?php $icon_id = get_term_meta ( $term -> term_id, 'em-categories-icon-id', true ); ?>
-        <input type="hidden" id="categoriescpt-icon-id" name="categoriescpt-icon-id" value="<?php echo $icon_id; ?>">
+        <?php $icon_id = get_term_meta($term -> term_id, 'em-categories-icon-id', true); ?>
+        <input type="hidden" id="categoriescpt-icon-id" name="categoriescpt-icon-id" value="<?php echo esc_html($icon_id); ?>">
         <div id="categoriescpt-icon-wrapper">
             <?php if ( $icon_id ) { ?>
-            <?php echo wp_get_attachment_image ( $icon_id, 'thumbnail' ); ?>
+            <?php echo wp_get_attachment_image($icon_id, 'thumbnail'); ?>
             <?php } ?>
         </div>
         <p>
@@ -104,7 +104,7 @@ public function load_media() {
  public function updated_categories_icon ( $term_id, $tt_id ) {
 
     if( isset( $_POST['categoriescpt-icon-id'] ) && '' !== $_POST['categoriescpt-icon-id'] ){
-        $icon = $_POST['categoriescpt-icon-id'];
+        $icon = sanitize_text_field($_POST['categoriescpt-icon-id']);
         update_term_meta ( $term_id, 'em-categories-icon-id', $icon );
     } else {
         update_term_meta ( $term_id, 'em-categories-icon-id', EMOSM_TXT_DOMAIN );

@@ -4,55 +4,46 @@ defined( 'ABSPATH' ) or die( 'Not allowed' );
 
 global $_wp_admin_css_colors;
 
-/* Update des paramètres */
-if( isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verify_nonce($_POST['security-settings'], 'valid-settings') ) {
+/* FONCTION UPDATE */
+function emosm_update_settings($tabSettings, $nameOption = '', $type = 1) {
 
-    if( isset($_POST["em_page_idmap"]) && is_numeric($_POST["em_page_idmap"])) {            
-        update_option('em_openstreetmap_location_page', $_POST["em_page_idmap"]);
-    }
-    if( isset($_POST["em_page_events_idmap"]) && is_numeric($_POST["em_page_events_idmap"])) {            
-        update_option('em_openstreetmap_events_page', $_POST["em_page_events_idmap"]);
-    }
-    if( isset($_POST["em_page_events_cat_idmap"]) && is_numeric($_POST["em_page_events_cat_idmap"])) {            
-        update_option('em_openstreetmap_events_cat_page', $_POST["em_page_events_cat_idmap"]);
-    }
+    if(empty($nameOption) || $nameOption =='') { return false; }
 
-    // UPDATE SETTINGS
-    if( get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting') ); }
-    $paramTemp = get_option('em_openstreetmap_setting');
-    // Je recupère le tableau temporaire des données
-    if( isset($paramTemp) && !empty($paramTemp) ) {
-        foreach($paramTemp as $variable=>$value) {           
-            // pour chaque clé du tableau de regarde si elle existe déjà
-            if ( array_key_exists($variable, $paramTemp) ) {
-                // Si la clé est la même que venant du post je la change
-                if( isset($tabPost[$variable]) ) { 
-                    array_fill_keys($paramTemp, sanitize_textarea_field($tabPost[$variable]));
-                }
-            }
+    if(isset($tabSettings) && is_array($tabSettings)) {
+        $newTabSettings = array();
+        foreach($tabSettings as $nameSettings => $valueSettings) {
+            $newTabSettings[$nameSettings] = sanitize_textarea_field($valueSettings);
         }
-    }
-    
-    if( isset($paramTemp) && is_array($paramTemp) ) {
-            // Si le tableau temporaire existe je le fusionne avec les données $_POST["em_openstreetmap_setting"]
-        $paramData = array_merge($paramTemp, $_POST["em_openstreetmap_setting"]);
-    } else {
-        // Sinon je garde le $_POST["em_openstreetmap_setting"] en cours
-        $paramData = $tabPost;
-    }
-    
-    if( update_option('em_openstreetmap_setting', $paramData) ) {
-        $options_saved = true;
-    }
-    // END UPDATE STTINGS
+        update_option($nameOption, $newTabSettings);
 
+        return true;
+    } else {
+        return false;
+    }
+    
+}
+
+/* Update des paramètres */
+if(isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verify_nonce($_POST['security-settings'], 'valid-settings')) {
+
+    if(isset($_POST["em_page_idmap"]) && is_numeric($_POST["em_page_idmap"])) {
+        update_option('em_openstreetmap_location_page', sanitize_text_field($_POST["em_page_idmap"]));
+    }
+    if(isset($_POST["em_page_events_idmap"]) && is_numeric($_POST["em_page_events_idmap"])) {
+        update_option('em_openstreetmap_events_page', sanitize_text_field($_POST["em_page_events_idmap"]));
+    }
+    if(isset($_POST["em_page_events_cat_idmap"]) && is_numeric($_POST["em_page_events_cat_idmap"])) {
+        update_option('em_openstreetmap_events_cat_page', sanitize_text_field($_POST["em_page_events_cat_idmap"]));
+    }
+   
+    $updateSetting = emosm_update_settings($_POST["em_openstreetmap_setting"], 'em_openstreetmap_setting');
+    if($updateSetting == true) { echo '<div id="message" class="updated fade"><p><strong>'.__('Settings are saved!', EMOSM_TXT_DOMAIN).'</strong></p></div>'; }
+    // END UPDATE SETTINGS
 
     $genereEventsFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', '', 1);
     $genereLocationFile = EM_Openstreetmap_Class::em_openstreetmap_generate('location', '', '', 1);
     $genereCategorieFile = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', '', 1);
 
-    $options_saved = true;
-    echo '<div id="message" class="updated fade"><p><strong>'.__('Seetings are saved!', EMOSM_TXT_DOMAIN).'</strong></p></div>';
 }
 
 // Récupère les paramètres sauvegardés
@@ -74,7 +65,7 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
     color:#e4e4e4!important;
 }
 .switch-field-mini input:checked + label { background-color: <?php echo $colors[2]; ?>; }
-.switch-field-mini input:checked + label:last-of-type {background-color: <?php echo $colors[0]; ?>!important;color:#e4e4e4!important;}
+.switch-field-mini input:checked + label:last-of-type {background-color: <?php echo esc_html($colors[0]); ?>!important;color:#e4e4e4!important;}
 
 .inputmap {border: 1px solid #ececec!important;padding: 0 8px 0 8px!important;line-height: 2!important;min-height: 30px!important;text-align: left!important; }
 .switch-field{font-family:"Lucida Grande",Tahoma,Verdana,sans-serif;padding-top:5px;padding-bottom:10px;overflow:hidden;width:180px}
@@ -98,7 +89,7 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
     
 </style>
 <div class="wrap">
-    <h2><?php _e('EM OpenStreeMap', EMOSM_TXT_DOMAIN); ?> v.<?php echo EMOSM_VERSION ?></h2>
+    <h2><?php _e('EM OpenStreeMap', EMOSM_TXT_DOMAIN); ?> v.<?php echo esc_html(EMOSM_VERSION); ?></h2>
     <div style="margin-top:40px;">
         <form method="post" action="admin.php?page=em_openstreetmap_settings_page" name="valide_settings">
             <input type="hidden" name="action" value="update_settings" />
@@ -118,37 +109,37 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             <?php
                             if( get_option('em_openstreetmap_location_page' ) ) {
                                 $idSelectPage = get_option('em_openstreetmap_location_page' );
-                                $linkPage = ' (<a href="'.get_the_permalink($idSelectPage).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
+                                $linkPage = ' (<a href="'.get_the_permalink($idSelectPage).'" target="_blank">'.__('See this page', EMOSM_TXT_DOMAIN).'</a>)';
                             } else {
                                 $idSelectPage = 0;
                                 $linkPage = '';
                             }
                             ?>
-                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap]<?php echo $linkPage; ?></p>
+                            <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap]<?php echo $linkPage; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            $args = array('name' => 'em_page_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN)); 
                             wp_dropdown_pages($args);
 
                             ?><br /><br />
-                            <strong><?php _e( 'Select Events Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
+                            <strong><?php _e('Select Events Map Page:', EMOSM_TXT_DOMAIN); ?></strong>
                             <?php
                             if( get_option('em_openstreetmap_events_page' ) ) {
                                 $idSelectPageEvents = get_option('em_openstreetmap_events_page' );
-                                $linkPageEvents = ' (<a href="'.get_the_permalink($idSelectPageEvents).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
+                                $linkPageEvents = ' (<a href="'.get_the_permalink($idSelectPageEvents).'" target="_blank">'.__('See this page', EMOSM_TXT_DOMAIN).'</a>)';
                             } else {
                                 $idSelectPageEvents = 0;
                                 $linkPageEvents = '';
                             }
                             ?>
-                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap type="events"]<?php echo $linkPageEvents; ?></p>
+                            <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap type="events"]<?php echo $linkPageEvents; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_events_idmap', 'selected' => $idSelectPageEvents, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            $args = array('name' => 'em_page_events_idmap', 'selected' => esc_html($idSelectPageEvents), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
                             wp_dropdown_pages($args);
 
                             ?><br /><br />
-                            <strong><?php _e( 'Select Cat Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
+                            <strong><?php _e('Select Cat Map Page:', EMOSM_TXT_DOMAIN); ?></strong>
                             <?php
-                            if( get_option('em_openstreetmap_categories_page' ) ) {
+                            if(get_option('em_openstreetmap_categories_page') ) {
                                 $idSelectPageCat = get_option('em_openstreetmap_categories_page' );
                                 $linkPageCat = ' (<a href="'.get_the_permalink($idSelectPageCat).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
@@ -156,9 +147,9 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                                 $linkPageCat = '';
                             }
                             ?>
-                            <p><?php _e( 'There must be the shortcode:', EMOSM_TXT_DOMAIN ); ?> [em_osmap_categories]<?php echo $linkPageCat; ?></p>
+                            <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap_categories]<?php echo $linkPageCat; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_events_cat_idmap', 'selected' => $idSelectPageCat, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            $args = array('name' => 'em_page_events_cat_idmap', 'selected' => esc_html($idSelectPageCat), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
                             wp_dropdown_pages($args);
 
                             ?>
@@ -171,22 +162,22 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                                         <td><?php _e('Zoom:', EMOSM_TXT_DOMAIN); ?></td>
                                     </tr>
                                     <tr>
-                                        <td><input name="em_openstreetmap_setting[latitude]" size="10" class="inputmap" value="<?php if( isset($paramMMode['latitude']) && $paramMMode['latitude'] !='' ) { echo $paramMMode['latitude']; } else { echo '47.4'; } ?>" /></td>
-                                        <td><input name="em_openstreetmap_setting[longitude]" size="10" class="inputmap" value="<?php if( isset($paramMMode['longitude']) && $paramMMode['longitude'] !='' ) { echo $paramMMode['longitude']; } else { echo '1.6'; } ?>" /></td>
-                                        <td><input name="em_openstreetmap_setting[zoom]" size="10" class="inputmap" value="<?php if( isset($paramMMode['zoom']) && $paramMMode['zoom'] !='' ) { echo $paramMMode['zoom']; } else { echo '5.5'; } ?>" /></td>
+                                        <td><input name="em_openstreetmap_setting[latitude]" size="10" class="inputmap" value="<?php if( isset($paramMMode['latitude']) && $paramMMode['latitude'] !='' ) { echo esc_html($paramMMode['latitude']); } else { echo '47.4'; } ?>" /></td>
+                                        <td><input name="em_openstreetmap_setting[longitude]" size="10" class="inputmap" value="<?php if( isset($paramMMode['longitude']) && $paramMMode['longitude'] !='' ) { echo esc_html($paramMMode['longitude']); } else { echo '1.6'; } ?>" /></td>
+                                        <td><input name="em_openstreetmap_setting[zoom]" size="10" class="inputmap" value="<?php if( isset($paramMMode['zoom']) && $paramMMode['zoom'] !='' ) { echo esc_html($paramMMode['zoom']); } else { echo '5.5'; } ?>" /></td>
                                     </tr>
                             </table><br /><hr /><br />
                             <strong><?php _e( 'Enter number of days before generate map expiration', EMOSM_TXT_DOMAIN ); ?></strong><p><?php _e( 'By default is 15 days.', EMOSM_TXT_DOMAIN ); ?></p>
                             <select name="em_openstreetmap_setting[expire]" class="inputmap">
-                                <option value="1" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 1) { echo 'selected'; }?>>1 <?php _e( 'day', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="3" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 3) { echo 'selected'; }?>>3 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="5" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 5) { echo 'selected'; }?>>5 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="7" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 7) { echo 'selected'; }?>>7 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="10" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 10) { echo 'selected'; }?>>10 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="15" <?php if( (isset($paramMMode['expire']) && $paramMMode['expire'] == 15) || empty($paramMMode['expire']) ) { echo 'selected'; }?>>15 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="20" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 20) { echo 'selected'; }?>>20 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="25" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 25) { echo 'selected'; }?>>25 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
-                                <option value="30" <?php if( isset($paramMMode['expire']) && $paramMMode['expire'] == 30) { echo 'selected'; }?>>30 <?php _e( 'days', EMOSM_TXT_DOMAIN ); ?>&nbsp;&nbsp;</option>
+                                <option value="1" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 1) { echo 'selected'; }?>>1 <?php _e('day', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="3" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 3) { echo 'selected'; }?>>3 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="5" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 5) { echo 'selected'; }?>>5 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="7" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 7) { echo 'selected'; }?>>7 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="10" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 10) { echo 'selected'; }?>>10 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="15" <?php if((isset($paramMMode['expire']) && $paramMMode['expire'] == 15) || empty($paramMMode['expire']) ) { echo 'selected'; }?>>15 <?php _e( 'days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="20" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 20) { echo 'selected'; }?>>20 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="25" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 25) { echo 'selected'; }?>>25 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
+                                <option value="30" <?php if(isset($paramMMode['expire']) && $paramMMode['expire'] == 30) { echo 'selected'; }?>>30 <?php _e('days', EMOSM_TXT_DOMAIN); ?>&nbsp;&nbsp;</option>
                             </select>
                             <br /><br /><hr /><br />
                             <strong><?php _e('Icon for Location Map:', EMOSM_TXT_DOMAIN); ?></strong><p><?php _e( 'By default is Default', EMOSM_TXT_DOMAIN ); ?></p>
@@ -301,16 +292,36 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                                     $selected = '';
                                     if( isset($paramMMode['map_icon']) && $paramMMode['map_icon'] == $value) { $selected = 'selected'; }
                                     ?>
-                                    <option value="<?php echo $value; ?>" <?php echo $selected; ?>><?php echo $name; ?></option>
+                                    <option value="<?php echo esc_html($value); ?>" <?php echo esc_html($selected); ?>><?php echo esc_html($name); ?></option>
                                 <?php } ?>
                             </select><br /><br />
                             <strong><?php _e('Size icon for Location Map:', EMOSM_TXT_DOMAIN); ?></strong><p><?php _e('Width x Height', EMOSM_TXT_DOMAIN); ?></p>
-                            <input name="em_openstreetmap_setting[map_icon_size_width]" size="5" class="inputmap" value="<?php if( isset($paramMMode['map_icon_size_width']) && $paramMMode['map_icon_size_width'] !='' ) { echo $paramMMode['map_icon_size_width']; } else { echo 34; } ?>" /> X 
-                            <input name="em_openstreetmap_setting[map_icon_size_height]" size="5" class="inputmap" value="<?php if( isset($paramMMode['map_icon_size_height']) && $paramMMode['map_icon_size_height'] !='' ) { echo $paramMMode['map_icon_size_height']; } else { echo 44; } ?>" />
+                            <input name="em_openstreetmap_setting[map_icon_size_width]" size="5" class="inputmap" value="<?php if( isset($paramMMode['map_icon_size_width']) && $paramMMode['map_icon_size_width'] !='' ) { echo esc_html($paramMMode['map_icon_size_width']); } else { echo 34; } ?>" /> X 
+                            <input name="em_openstreetmap_setting[map_icon_size_height]" size="5" class="inputmap" value="<?php if( isset($paramMMode['map_icon_size_height']) && $paramMMode['map_icon_size_height'] !='' ) { echo esc_html($paramMMode['map_icon_size_height']); } else { echo 44; } ?>" />
                             
                             <br /><br /><hr /><br />
                             <strong><?php _e('Tile for Location & Events Map:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
-                            <input name="em_openstreetmap_setting[tile]" size="100" class="inputmap" value="<?php if( isset($paramMMode['tile']) && $paramMMode['tile'] !='' ) { echo esc_html($paramMMode['tile']); } else { echo 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'; } ?>" />
+                            <select name="em_openstreetmap_setting[tile]">
+                                <?php 
+                                $tabTile = array(
+                                    1 => 'OpenStreetMap\'s Standard',
+                                    2 => 'OpenStreetMap France',
+                                    3 => 'Humanitarian map style',
+                                    4 => 'Satellite',
+                                    5 => 'CyclOSM',
+                                    6 => 'Custom API MAPBOX'
+                                );
+                                foreach($tabTile as $valueTile=>$nameTile){
+                                    $selected = '';
+                                    if($valueTile == $paramMMode['tile']) { $selected = ' selected="selected"'; }
+                                    echo '<option value="'.esc_html($valueTile).'" '.esc_html($selected).'>'.esc_html($nameTile).'</value>';
+                                }
+                                ?>
+                                
+                                <?php ?>
+                            </select><br />
+                            <!-- https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmVzdGV6Y29ubmVjdGVzIiwiYSI6ImNrcXVtcHd4aDA2MncydXJ5OHdrN242MG4ifQ.yxsWcR17v_epL7t-pcxltw -->
+                            <input type="text" name="em_openstreetmap_setting[custom_tile]" style="width:100%;" value="<?php if(isset($paramMMode['custom_tile'])) { echo esc_html($paramMMode['custom_tile']); } ?>" />
                             <br /><br /><hr /><br />
                             <strong><?php _e('Custom CSS:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
                             <TEXTAREA NAME="em_openstreetmap_setting[css]" id="emosmstyle" COLS=50 ROWS=2><?php if( isset($paramMMode['css']) && $paramMMode['css']!='' ) { echo esc_textarea(stripslashes($paramMMode['css'])); }  ?></TEXTAREA>
