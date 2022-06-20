@@ -321,7 +321,7 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                                 <?php ?>
                             </select><br />
                             <!-- https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmVzdGV6Y29ubmVjdGVzIiwiYSI6ImNrcXVtcHd4aDA2MncydXJ5OHdrN242MG4ifQ.yxsWcR17v_epL7t-pcxltw -->
-                            <input type="text" name="em_openstreetmap_setting[custom_tile]" style="width:100%;" value="<?php if(isset($paramMMode['custom_tile'])) { echo esc_html($paramMMode['custom_tile']); } ?>" />
+                            <input type="text" name="em_openstreetmap_setting[custom_tile]" placeholder="<?php _e('Enter here API MapBox access token', EMOSM_TXT_DOMAIN); ?>" style="width:100%;" value="<?php if(isset($paramMMode['custom_tile'])) { echo esc_html($paramMMode['custom_tile']); } ?>" />
                             <br /><br /><hr /><br />
                             <strong><?php _e('Custom CSS:', EMOSM_TXT_DOMAIN); ?></strong><p></p>
                             <TEXTAREA NAME="em_openstreetmap_setting[css]" id="emosmstyle" COLS=50 ROWS=2><?php if( isset($paramMMode['css']) && $paramMMode['css']!='' ) { echo esc_textarea(stripslashes($paramMMode['css'])); }  ?></TEXTAREA>

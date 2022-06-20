@@ -45,7 +45,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             if( isset($mapHeight) && $mapHeight!='' ) { $height = esc_attr($mapHeight); } else { $height = '250'; }
 
             $mapLayer = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_layer', true);
-            if( isset($mapLayer) && $mapLayer!='' ) { $layer = esc_html($mapLayer); } else { $layer = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
+            if( isset($mapLayer) && $mapLayer!='' && is_numeric($mapLayer) ) { $layer = get_mapTile($mapLayer); } else { $layer = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
 
             $mapZoom = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_zoom', true);
             if( isset($mapZoom) && $mapZoom!='' ) { $zoom = esc_html($mapZoom); } else { $zoom = 13; }

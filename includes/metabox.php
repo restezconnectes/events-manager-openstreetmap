@@ -22,6 +22,7 @@ function em_openstreetmap_settings($post) {
     $mapLayer = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_layer', true);
     $mapZoom = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_zoom', true);
     $mapIcon = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_icon', true);
+    if(isset($mapLayer) && !is_numeric($mapLayer)) { $mapLayer=1;}
 ?>
     <table>
         <tr>
@@ -31,8 +32,28 @@ function em_openstreetmap_settings($post) {
         </tr>
         <tr>
             <td><strong><?php _e('Tile:', EMOSM_TXT_DOMAIN); ?></strong></td>
-            <td><input name="em_openstreetmap_map_layer" style="border: 1px solid #ececec;padding: 0 8px;line-height: 2;min-height: 30px;text-align: center;
-" size="80%" value="<?php if( isset($mapLayer) && $mapLayer != '') { echo esc_html($mapLayer); } else { echo "http://{s}.tile.osm.org/{z}/{x}/{y}.png"; } ?>"></td>
+            <td><select name="em_openstreetmap_map_layer" style="width:250px;border: 1px solid #ececec;padding: 0 8px;line-height: 2;min-height: 30px;">
+                <?php 
+                    $tabTile = array(
+                        1 => 'OpenStreetMap\'s Standard',
+                        2 => 'OpenStreetMap France',
+                        3 => 'Humanitarian map style',
+                        4 => 'Satellite',
+                        5 => 'CyclOSM',
+                        6 => 'Custom API MAPBOX'
+                    );
+                    foreach($tabTile as $valueTile=>$nameTile){
+                        $selected = '';
+                        if($valueTile == $mapLayer) { $selected = ' selected="selected"'; }
+                        echo '<option value="'.esc_html($valueTile).'" '.esc_html($selected).'>'.esc_html($nameTile).'</value>';
+                    }
+                    ?>
+                    
+                    <?php ?>
+                </select><br />
+                <!-- https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicmVzdGV6Y29ubmVjdGVzIiwiYSI6ImNrcXVtcHd4aDA2MncydXJ5OHdrN242MG4ifQ.yxsWcR17v_epL7t-pcxltw -->
+                <input type="text" name="em_openstreetmap_custom_map_layer" placeholder="<?php _e('Enter here API MapBox access token', EMOSM_TXT_DOMAIN); ?>" style="width:100%;" value="<?php if(isset($paramMMode['custom_tile'])) { echo esc_html($paramMMode['custom_tile']); } ?>" />
+            </td>
         </tr>
         <tr>
             <td><strong><?php _e('Zoom:', EMOSM_TXT_DOMAIN); ?></strong></td>
@@ -64,16 +85,16 @@ function em_openstreetmap_settings($post) {
 }
 function em_openstreetmap_settings_save( $post_id ) {
 
-    if( isset($_POST['em_openstreetmap_map_height']) && $_POST['em_openstreetmap_map_height']!='' && is_numeric($_POST['em_openstreetmap_map_height']) ) { $mapHeight = sanitize_text_field($_POST['em_openstreetmap_map_height']); } else { $mapHeight = 250; }
-    update_post_meta($post_id, '_location_osm_map_height', sanitize_text_field($mapHeight));
+    if( isset($_POST['em_openstreetmap_map_height']) && $_POST['em_openstreetmap_map_height']!='' && is_numeric($_POST['em_openstreetmap_map_height']) ) { $mapHeight = esc_html($_POST['em_openstreetmap_map_height']); } else { $mapHeight = 250; }
+    update_post_meta($post_id, '_location_osm_map_height', esc_html($mapHeight));
     //if( isset($_POST['em_openstreetmap_map_layer']) && $_POST['em_openstreetmap_map_layer']!='' ) { $mapLayer = esc_url($_POST['em_openstreetmap_map_layer'], array('{', '}', '?') ); } else { $mapLayer = 'https://{s}.tile.osm.org/{z}/{x}/{y}.png'; }
         //error_log('layer:'.esc_url($_POST['em_openstreetmap_map_layer'], array('{', '}', '?') ));
     if( isset($_POST['em_openstreetmap_map_layer']) && $_POST['em_openstreetmap_map_layer']!='' ) {
-        update_post_meta($post_id, '_location_osm_map_layer', $_POST['em_openstreetmap_map_layer']); 
+        update_post_meta($post_id, '_location_osm_map_layer', sanitize_text_field($_POST['em_openstreetmap_map_layer'])); 
     }
-    if( isset($_POST['em_openstreetmap_map_zoom']) && $_POST['em_openstreetmap_map_zoom']!='' && is_numeric($_POST['em_openstreetmap_map_zoom']) ) { $mapZoom = sanitize_text_field($_POST['em_openstreetmap_map_zoom']); } else { $mapZoom = 13; }
+    if( isset($_POST['em_openstreetmap_map_zoom']) && $_POST['em_openstreetmap_map_zoom']!='' && is_numeric($_POST['em_openstreetmap_map_zoom']) ) { $mapZoom = esc_html($_POST['em_openstreetmap_map_zoom']); } else { $mapZoom = 13; }
     update_post_meta($post_id, '_location_osm_map_zoom', sanitize_text_field($mapZoom));
-    if( isset($_POST['em_openstreetmap_map_icon']) && $_POST['em_openstreetmap_map_icon']!='' ) { $mapIcon = sanitize_text_field($_POST['em_openstreetmap_map_icon']); } else { $mapIcon = 'default'; }
+    if( isset($_POST['em_openstreetmap_map_icon']) && $_POST['em_openstreetmap_map_icon']!='' ) { $mapIcon = esc_html($_POST['em_openstreetmap_map_icon']); } else { $mapIcon = 'default'; }
     update_post_meta(wp_kses_post($post_id), '_location_osm_map_icon', $mapIcon);
     $genereFile = EM_Openstreetmap_Class::em_openstreetmap_generate('events', '', 0, 1);
     $genereCategorie = EM_Openstreetmap_Class::em_openstreetmap_generate('categories', '', 0, 1);
@@ -165,7 +186,7 @@ function em_openstreetmap_location($post) {
                     <div id="coord" style="margin-top: 25px;"></div>
                 </div>
                 <h4><?php _e('Map Options', EMOSM_TXT_DOMAIN); ?></h4>
-                <!--<?php _e('Height:', EMOSM_TXT_DOMAIN); ?> <input type="text" size="4" name="em_openstreetmap_map_height" value="<?php echo intval($mapHeight); ?>">px<br />-->
+                <!--<?php _e('Height:', EMOSM_TXT_DOMAIN); ?> <input type="text" size="4" name="em_openstreetmap_map_height" value="<?php echo esc_html($mapHeight); ?>">px<br />-->
                 <?php _e('Icon:', EMOSM_TXT_DOMAIN); ?>
                 <select name="em_location_icon" style="border: 1px solid #ececec;padding: 0 8px;line-height: 2;min-height: 30px;text-align: left;" >
                     <option value="default" <?php if( isset($mapIcon) && $mapIcon == 'default') { echo 'selected'; } ?>><?php _e('Default Icon', EMOSM_TXT_DOMAIN); ?></option>
