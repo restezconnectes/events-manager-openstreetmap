@@ -23,7 +23,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
 
         $latitude = get_post_meta(wp_kses_post($post->ID), '_location_latitude', true);
         $longitude = get_post_meta(wp_kses_post($post->ID), '_location_longitude', true);
-
+        
         if( isset($EM_Location->location_latitude) && $EM_Location->location_latitude!='' ) {
             
             if( isset($EM_Location->location_latitude) && $EM_Location->location_latitude!="" ) { 
@@ -39,7 +39,6 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             $address = $EM_Location->location_address; } else { $address = ''; }
             if( isset($EM_Location->location_town) && $EM_Location->location_town!="" ) { 
             $town = $EM_Location->location_town; } else { $town = ''; }
-
 
             $mapHeight = get_post_meta(wp_kses_post($post->ID), '_location_osm_map_height', true);
             if( isset($mapHeight) && $mapHeight!='' ) { $height = esc_attr($mapHeight); } else { $height = '250'; }
@@ -70,7 +69,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
                 }
             }
             
-            if( ini_get('allow_url_fopen') ) {
+            if( \filter_var( \ini_get('allow_url_fopen'), \FILTER_VALIDATE_BOOLEAN ) ) {
                 list($marker_icon_width, $marker_icon_height, $type, $attr) = getimagesize($urlIcon);
             } else {
                 $marker_icon_width = 33;
@@ -79,14 +78,22 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
             if( isset($marker_icon_width) && $marker_icon_width=="") { $marker_icon_width = 33; }
             if( isset($marker_icon_height) && $marker_icon_height=="") { $marker_icon_height = 44; }
             if ( $urlIcon == '' ) { $urlIcon = esc_url(EMOSM_PLUGIN_URL.'images/markers/default.png'); }
+            
+            //$EM_Location = em_get_location($EM_Location->location_id);
 
-            $EM_Location = em_get_location($EM_Event->location_id);
-
-            $replace = '<!-- '.$urlIcon.'-->
+            $replace = '
             <div id="event-map" style="height: '.$height.'px!important;"></div>';
             $replace .= "<script>
+
+                // Infos pour le button home
+                var lat = ".esc_attr($latitude).";
+                var lng = ".esc_attr($longitude).";
+                var zoom = ".$zoom.";
+                // ----
+
                 var options = {
                     zoom: ".$zoom.",
+                    zoomControl: false,
                     tap:false,
                 }
                 const map = L.map('event-map', options).setView([".$latitude.", ".$longitude."], ".$zoom.");
@@ -106,6 +113,7 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
                     popupAnchor:  [0, -".($marker_icon_height)."],
                 });
 
+                ".get_mapHomeButton()."
 
                 function setLeafletMarker() {
                     L.marker([".$latitude.", ".$longitude."], { icon: myIcon })
@@ -118,11 +126,11 @@ function em_openstreetmap_placeholders($replace, $EM_Event, $result){
 
             </script>
             ";
-                    
+            
          
-            } else {
-                $replace = '';
-            }
+        } else {
+            $replace = '';
+        }
 	}
 
 	return $replace;
@@ -132,8 +140,9 @@ add_filter('em_location_output_placeholder','em_openstreetmap_placeholders',1,4)
 
 function em_openstreetmap_map( $atts ) {
 
-    global $EM_Location;
+    //global $EM_Location;
     global $post;
+    $post_type = get_post_type( $post );
 
     // Récupère les paramètres sauvegardés
     if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
@@ -184,180 +193,112 @@ function em_openstreetmap_map( $atts ) {
         $map = "<style>#map".$nameMap." {height:".esc_html($height)."px;}</style>";
     }
     $map = "<div id=\"map".$nameMap."\">
-       <!-- Ici s'affichera la carte -->
+       <!-- Ici s'affichera la carte  -->
     </div>";
 
-    $map .= "<script type=\"text/javascript\">
+$map .= "<script type=\"text/javascript\">
+    
+    var osmLink = '<a href=\"http://openstreetmap.org\">OpenStreetMap France</a>',
+            thunLink = 'OpenStreetMap HOT',
+            esriLink = 'Esri WorldStreetMap',
+            EsriWorldImagery = 'Satellite',
+            CyclOSM = 'CyclOSM';
         
-        var osmLink = '<a href=\"http://openstreetmap.org\">OpenStreetMap France</a>',
-                thunLink = 'OpenStreetMap HOT',
-                esriLink = 'Esri WorldStreetMap',
-                EsriWorldImagery = 'Satellite',
-                CyclOSM = 'CyclOSM';
-            
-        var esriUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
-            esriAttrib = '',
-            osmUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
-            osmAttrib = '&copy; ' + osmLink + ' Contributors',
-            landUrl = 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-            thunAttrib = '&copy; '+osmLink+' Contributors & '+thunLink,        
-            EsriWorldImageryUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            EsriWorldImageryAttrib = '&copy; '+osmLink+' Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-            CyclOSMUrl = 'https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png'
-            CyclOSMAttrib = '&copy; '+osmLink+' <a href=\"https://github.com/cyclosm/cyclosm-cartocss-style/releases\" title=\"CyclOSM - Open Bicycle render\">CyclOSM</a> | Map data: &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
+    var esriUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+        esriAttrib = '',
+        osmUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+        osmAttrib = '&copy; ' + osmLink + ' Contributors',
+        landUrl = 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        thunAttrib = '&copy; '+osmLink+' Contributors & '+thunLink,        
+        EsriWorldImageryUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        EsriWorldImageryAttrib = '&copy; '+osmLink+' Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        CyclOSMUrl = 'https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+        CyclOSMAttrib = '&copy; '+osmLink+' <a href=\"https://github.com/cyclosm/cyclosm-cartocss-style/releases\" title=\"CyclOSM - Open Bicycle render\">CyclOSM</a> | Map data: &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
 
-        var esriMap = L.tileLayer(esriUrl, {attribution: esriAttrib}),
-            osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
-            landMap = L.tileLayer(landUrl, {attribution: thunAttrib}),
-            EsriWorldImagery = L.tileLayer(EsriWorldImageryUrl, {attribution: EsriWorldImageryAttrib}),
-            CyclOSM = L.tileLayer(CyclOSMUrl, {attribution: CyclOSMAttrib});
+    var esriMap = L.tileLayer(esriUrl, {attribution: esriAttrib}),
+        osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+        landMap = L.tileLayer(landUrl, {attribution: thunAttrib}),
+        EsriWorldImagery = L.tileLayer(EsriWorldImageryUrl, {attribution: EsriWorldImageryAttrib}),
+        CyclOSM = L.tileLayer(CyclOSMUrl, {attribution: CyclOSMAttrib});
 
-		var tiles = L.tileLayer('".$tile."', {
-				maxZoom: 18,
-				attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors',
-                id: 'mapbox/streets-v11',
-                tileSize: 512,
-                zoomOffset: -1
-			}),
-            
-            ";
+    var tiles = L.tileLayer('".$tile."', {
+            maxZoom: 18,
+            attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors',
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1
+        }),
+        
+        ";
 
         if( isset($map_latitude) && $map_latitude!='' && $map_longitude!='' ) {
-    $map .= "latlng = L.latLng(".esc_attr($map_latitude).", ".esc_attr($map_longitude)."); ";        
+$map .= "latlng = L.latLng(".esc_attr($map_latitude).", ".esc_attr($map_longitude)."); 
+    var lat = ".esc_attr($map_latitude).";
+    var lng = ".esc_attr($map_longitude).";
+    ";        
         } else {
-    $map .= "latlng = L.latLng(".esc_attr($latitude).", ".esc_attr($longitude).");";
+$map .= "latlng = L.latLng(".esc_attr($latitude).", ".esc_attr($longitude).");
+    var lat = 47.4;
+    var lng = 1.6;
+        ";
         }
     $map .= "
-        var options = {
-            maxZoom: 18,
-            center: latlng,
-            zoom: ".intval($zoom).",
-            layers: [tiles],
-            tap:false,
-        }
-        var map = L.map('map".$nameMap."', options);
+    var zoom = ".$zoom.";
 
-        var baseLayers = {
-            'Custom OpenStreetMap': tiles,
-            'OpenStreetMap France': esriMap,
-            'OSM Mapnik': osmMap,
-            'OpenStreetMap HOT': landMap,        
-            'Satellite':EsriWorldImagery,
-            'Cycle OSM':CyclOSM
-        };
+    var options = {
+        maxZoom: 18,
+        center: latlng,
+        zoom: ".intval($zoom).",
+        ";
+    if( $home_button == 1 ) {
+    $map .= "zoomControl: false,";
+    }
+    $map .= "layers: [tiles], tap:false, }
+    var map = L.map('map".$nameMap."', options);
+
+    var baseLayers = {
+        'Custom OpenStreetMap': tiles,
+        'OpenStreetMap France': esriMap,
+        'OSM Mapnik': osmMap,
+        'OpenStreetMap HOT': landMap,        
+        'Satellite':EsriWorldImagery,
+        'Cycle OSM':CyclOSM
+    };
 
 ";
 
 if( $search == 1) {
-    $map .= "
-        /// ------ GEOCODER
-        var IconSearch = L.icon({
-            iconUrl: '".esc_url(EMOSM_URL.'images/iconsearch.png')."',
-            iconSize:     [32, 48],
-            iconAnchor:   [16, 48],
-            popupAnchor:  [-3, -48],
-        });
-        
-        var optionsSearch = {
-            placeholder: '".__('Search for places or addresses', EMOSM_TXT_DOMAIN)."',
-            //position: 'topright'
-        }
-                
-        // create the geocoding control and add it to the map
-        var searchControl = L.esri.Geocoding.geosearch(optionsSearch).addTo(map);
-    
-        // create an empty layer group to store the results and add it to the map
-        var results = L.layerGroup().addTo(map);
-    
-        // listen for the results event and add every result to the map
-        searchControl.on(\"results\", function(data) {
-            results.clearLayers();
-            for (var i = data.results.length - 1; i >= 0; i--) {
-                results.addLayer(L.marker(data.results[i].latlng, { icon: IconSearch }));
-            }
-        });
-        
-        // ------ END 
-
-";
+    $map .= get_mapSearch();
 }
 if( $baseLayers == 1 ) {
-    $map .= "L.control.layers(baseLayers).addTo(map);";
+$map .= "L.control.layers(baseLayers).addTo(map);";
 }
     $map .= "
-        var markers = L.markerClusterGroup();
+    var markers = L.markerClusterGroup();
 	";
 if( $type == 'location' ) {
-    $map .= "
-
-		for (var i = 0; i < addressPoints.length; i++) {
-			var a = addressPoints[i];
-			var title = a[2];
-            var myIcon = L.icon({
-                iconUrl: '' + a[6] + '',
-                iconSize:     [".esc_attr($icon_width).", ".esc_attr($icon_height)."],
-                iconAnchor:   [".(esc_attr($icon_width)/2).", ".esc_attr($icon_height)."],
-                popupAnchor:  [-3, -".(esc_attr($icon_height))."],
-            });
-            // create popup contents
-            var customPopup = '' + a[4] + '<div class=\"em-osm-content\"><a href=\"' + a[3] + '\" target=\"_blank\"><h3>' + title + '</h3></a><p>' + a[5] + '</p></div><div class=\"clear\"></div><div class=\"em-osm-readmore\"><a href=\"' + a[3] + '\" target=\"_blank\">".esc_attr($readmore)."</a></div><br />';
-            
-            // specify popup options 
-            var customOptions = {'maxWidth': '500','className' : 'customevent'}
-
-			var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title, icon: myIcon });
-			marker.bindPopup(customPopup,customOptions);
-			markers.addLayer(marker);
-		}
-";
-    if( $legend_location == 1 ) {
-    $map .= "
-        // create legend : https://tomik23.github.io/leaflet-examples/#62.count-markers
-
-        const legend = L.control({ position: 'bottomleft' });
-
-        legend.onAdd = function () {
-        const div = L.DomUtil.create('div', 'description');
-        L.DomEvent.disableClickPropagation(div);
-
-        const allMarkers = L.DomUtil.create('div', 'all-markers');
-        allMarkers.insertAdjacentHTML(
-            'beforeend',
-            '<div style=\"background-color:#ffffff;padding:0.8em;\">".__('All locations on map:', EMOSM_TXT_DOMAIN)." <strong>' + i +'</strong></div>'
-        );
-
-        div.appendChild(allMarkers);
-        return div;
-        };
-
-        legend.addTo(map);
-    ";
-    }
-
-} else if( $type == 'events') { 
-
     $map .= "
     for (var i = 0; i < addressPoints.length; i++) {
         var a = addressPoints[i];
         var title = a[2];
-        var urlIcon = a[6]
-        var catIcon = L.icon({
-            iconUrl: urlIcon,
-            iconSize:     [".esc_html($icon_width).", ".esc_html($icon_height)."],
-            iconAnchor:   [".(esc_html($icon_width/2)).", ".esc_html($icon_height)."],
-            popupAnchor:  [-3, -".(esc_html($icon_height))."],
+        var myIcon = L.icon({
+            iconUrl: '' + a[6] + '',
+            iconSize:     [".esc_attr($icon_width).", ".esc_attr($icon_height)."],
+            iconAnchor:   [".(esc_attr($icon_width)/2).", ".esc_attr($icon_height)."],
+            popupAnchor:  [-3, -".(esc_attr($icon_height))."],
         });
         // create popup contents
-        var customPopup = '' + a[4] + '<div class=\"em-osm-event-content\"><a href=\"' + a[3] + '\" target=\"_blank\"><h3>' + title + '</h3></a><p>' + a[5] + '</p></div><div class=\"clear\"></div><div class=\"em-osm-event-readmore\"><a href=\"' + a[3] + '\" target=\"_blank\">".esc_html($readmore)."</a></div><br />';
+        var customPopup = '' + a[4] + '<div class=\"em-osm-content\"><a href=\"' + a[3] + '\" target=\"_blank\"><h3>' + title + '</h3></a><p>' + a[5] + '</p></div><div class=\"clear\"></div><div class=\"em-osm-readmore\"><a href=\"' + a[3] + '\" target=\"_blank\">".esc_attr($readmore)."</a></div><br />';
         
         // specify popup options 
         var customOptions = {'maxWidth': '500','className' : 'customevent'}
 
-        var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title, icon: catIcon });
+        var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title, icon: myIcon });
         marker.bindPopup(customPopup,customOptions);
         markers.addLayer(marker);
-    }";
-    if( $legend_events == 1 ) {
+    }
+";
+    if( $legend_location == 1 ) {
     $map .= "
     // create legend : https://tomik23.github.io/leaflet-examples/#62.count-markers
 
@@ -370,7 +311,7 @@ if( $type == 'location' ) {
     const allMarkers = L.DomUtil.create('div', 'all-markers');
     allMarkers.insertAdjacentHTML(
         'beforeend',
-        '<div style=\"background-color:#ffffff;padding:0.8em;\">".__('All events on map:', EMOSM_TXT_DOMAIN)." <strong>' + i +'</strong></div>'
+        '<div style=\"background-color:#ffffff;padding:0.8em;\">".__('All locations on map:', EMOSM_TXT_DOMAIN)." <strong>' + i +'</strong></div>'
     );
 
     div.appendChild(allMarkers);
@@ -378,96 +319,44 @@ if( $type == 'location' ) {
     };
 
     legend.addTo(map);
-";
+    ";
+    }
+
+} else if( $type == 'events') { 
+
+$map .= "
+for (var i = 0; i < addressPoints.length; i++) {
+    var a = addressPoints[i];
+    var title = a[2];
+    var urlIcon = a[6]
+    var catIcon = L.icon({
+        iconUrl: urlIcon,
+        iconSize:     [".esc_html($icon_width).", ".esc_html($icon_height)."],
+        iconAnchor:   [".(esc_html($icon_width/2)).", ".esc_html($icon_height)."],
+        popupAnchor:  [-3, -".(esc_html($icon_height))."],
+    });
+    // create popup contents
+    var customPopup = '' + a[4] + '<div class=\"em-osm-event-content\"><a href=\"' + a[3] + '\" target=\"_blank\"><h3>' + title + '</h3></a><p>' + a[5] + '</p></div><div class=\"clear\"></div><div class=\"em-osm-event-readmore\"><img src=\"' + a[6] + '\" width=\"25\"><a href=\"' + a[3] + '\" target=\"_blank\">".esc_html($readmore)."</a></div><br />';
+    
+    // specify popup options 
+    var customOptions = {'maxWidth': '500','className' : 'customevent'}
+
+    var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title, icon: catIcon });
+    marker.bindPopup(customPopup,customOptions);
+    markers.addLayer(marker);
+}";
+    if( $legend_events == 1 ) {
+$map .= get_mapLegend();
     }
 }
     $map .= "
-		map.addLayer(markers);
+map.addLayer(markers);
 ";
     if( $home_button == 1 ) {
-        if ( wp_is_mobile() ) : 
-            
-        else :
-        $map .= '
-        /// ------ HOME BUTTON
-        const lat = '.$latitude.';
-        const lng = '.$longitude.';
-        const htmlTemplate =
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>";
-
-        // create custom button
-        const customControl = L.Control.extend({
-        // button position
-        options: {
-            position: "topleft",
-        },
-
-        // method
-        onAdd: function (map) {
-            //console.log(map.getCenter());
-            // create button
-            const btn = L.DomUtil.create("button");
-            btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
-            btn.innerHTML = htmlTemplate;
-            btn.className += "leaflet-bar back-to-home";
-            btn.setAttribute(
-            "style",
-            "margin-top: 46px; left: 0; display: none; cursor: pointer; justify-content: center;"
-            );
-
-            return btn;
-        },
-        });
-
-        // adding new button to map controll
-        map.addControl(new customControl());
-
-        const button = document.querySelector(".back-to-home");
-
-        // on drag end
-        map.on("dragend", getCenterOfMap);
-
-        // on zoom end
-        map.on("zoomend", getCenterOfMap);
-
-        function getCenterOfMap() {
-        const { lat, lng } = map.getCenter();
-        const latDZ = lat.toFixed(5) * 1;
-        const lngDZ = lng.toFixed(5) * 1;
-
-        arrayCheckAndClick([latDZ, lngDZ]);
-        }
-
-        // compare two arrays, if arrays diffrent show button home-back
-        function arrayCheckAndClick(array) {
-        const IfTheDefaultLocationIsDifferent =
-            [lat, lng].sort().join(",") !== array.sort().join(",");
-
-        button.style.display = IfTheDefaultLocationIsDifferent ? "flex" : "none";
-
-        // clicking on home-back set default view and zoom
-        button.addEventListener("click", function () {
-            // more fancy back to previous place
-            map.flyTo([lat, lng], zoom);
-            button.style.display = "none";
-        });
-        }
-        /// ------ 
-        ';
-        endif;
+        $map .= get_mapHomeButton();
     }
     if( $mini_map == 1 ) {
-        if ( wp_is_mobile() ) : 
-            $toggleDisplay = "false";
-        else :
-            $toggleDisplay = "true";
-        endif;
-        $map .= "
-        const attribution =
-        '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
-        const osm2 = new L.TileLayer('".get_mapTile($paramMMode['tile'])."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
-        var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: ".esc_html($toggleDisplay)." }).addTo(map);
-        ";
+        $map .= get_mapMiniMap(esc_html($paramMMode['tile']));
     }
 
 $map .= "
@@ -555,7 +444,153 @@ function em_openstreetmap_map_categories( $atts ) {
         $map .= "L.control.layers(baseLayers).addTo(map);";
     }
     if( $search == 1 ) {
-    $map .= '
+        $map .= get_mapSearch();
+    }
+    if( $home_button == 1 ) {
+        $map .= get_mapHomeButton();
+    }
+
+    if( $mini_map == 1 ) {
+        $map .= get_mapMiniMap(esc_html($paramMMode['tile']));
+    }
+    $map .= "</script>";
+
+
+    return $map;
+}
+add_shortcode( 'em_osmap_categories', 'em_openstreetmap_map_categories' );
+
+function get_mapMiniMap($tile) {
+
+    if ( wp_is_mobile() ) : 
+        $toggleDisplay = "false";
+    else :
+        $toggleDisplay = "true";
+    endif;
+    $mini_map = "
+    const attribution =
+    '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
+    const osm2 = new L.TileLayer('".get_mapTile($tile)."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
+    var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: ".esc_html($toggleDisplay)." }).addTo(map);
+    ";
+
+    return $mini_map;
+}
+
+function get_mapHomeButton() {
+
+    $homebutton = "
+    // custom zoom bar control that includes a Zoom Home function
+    L.Control.zoomHome = L.Control.extend({
+        options: {
+            position: 'topleft',
+            zoomInText: '+',
+            zoomInTitle: '".__('Zoom in', EMOSM_TXT_DOMAIN)."',
+            zoomOutText: '-',
+            zoomOutTitle: '".__('Zoom out', EMOSM_TXT_DOMAIN)."',
+            zoomHomeText: '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-13 -13 59 59\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>',
+            zoomHomeTitle: '".__('Zoom home', EMOSM_TXT_DOMAIN)."'
+        },
+
+        onAdd: function (map) {
+            var controlName = 'gin-control-zoom',
+                container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
+                options = this.options;
+
+            this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
+            controlName + '-in', container, this._zoomIn);
+            this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
+            controlName + '-home', container, this._zoomHome);
+            this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+            controlName + '-out', container, this._zoomOut);
+
+            this._updateDisabled();
+            map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+            return container;
+        },
+
+        onRemove: function (map) {
+            map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+        },
+
+        _zoomIn: function (e) {
+            this._map.zoomIn(e.shiftKey ? 3 : 1);
+        },
+
+        _zoomOut: function (e) {
+            this._map.zoomOut(e.shiftKey ? 3 : 1);
+        },
+
+        _zoomHome: function (e) {
+            map.setView([lat, lng], zoom);
+        },
+
+        _createButton: function (html, title, className, container, fn) {
+            var link = L.DomUtil.create('a', className, container);
+            link.innerHTML = html;
+            link.href = '#';
+            link.title = title;
+
+            L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+                .on(link, 'click', L.DomEvent.stop)
+                .on(link, 'click', fn, this)
+                .on(link, 'click', this._refocusOnMap, this);
+
+            return link;
+        },
+
+        _updateDisabled: function () {
+            var map = this._map,
+                className = 'leaflet-disabled';
+
+            L.DomUtil.removeClass(this._zoomInButton, className);
+            L.DomUtil.removeClass(this._zoomOutButton, className);
+
+            if (map._zoom === map.getMinZoom()) {
+                L.DomUtil.addClass(this._zoomOutButton, className);
+            }
+            if (map._zoom === map.getMaxZoom()) {
+                L.DomUtil.addClass(this._zoomInButton, className);
+            }
+        }
+    });
+    // add the new control to the map
+    var zoomHome = new L.Control.zoomHome();
+    zoomHome.addTo(map);
+    ";
+    return $homebutton;
+}
+
+function get_mapLegend() {
+
+    $mapLegend = "
+    // create legend : https://tomik23.github.io/leaflet-examples/#62.count-markers
+
+    const legend = L.control({ position: 'bottomleft' });
+
+    legend.onAdd = function () {
+    const div = L.DomUtil.create('div', 'description');
+    L.DomEvent.disableClickPropagation(div);
+
+    const allMarkers = L.DomUtil.create('div', 'all-markers');
+    allMarkers.insertAdjacentHTML(
+        'beforeend',
+        '<div style=\"background-color:#ffffff;padding:0.8em;\">".__('All events on map:', EMOSM_TXT_DOMAIN)." <strong>' + i +'</strong></div>'
+    );
+
+    div.appendChild(allMarkers);
+    return div;
+    };
+
+    legend.addTo(map);
+";
+
+    return $mapLegend;
+}
+function get_mapSearch() {
+
+    $mapSearch = '
     /// ------ GEOCODER
     var IconSearch = L.icon({
         iconUrl: "'.esc_url(EMOSM_URL.'images/iconsearch.png').'",
@@ -585,99 +620,8 @@ function em_openstreetmap_map_categories( $atts ) {
 
     // ------ END 
     ';
-    }
-    if( $home_button == 1 ) {
-
-        if ( wp_is_mobile() ) : 
-            
-        else :
-            
-        $map .= '
-    /// ------ HOME BUTTON
-    const htmlTemplate =
-    "<svg xmlns=\"https://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 18.451L16 6.031 0 18.451v-5.064L16 .967l16 12.42zM28 18v12h-8v-8h-8v8H4V18l12-9z\" /></svg>";
-
-    // create custom button
-    const customControl = L.Control.extend({
-    // button position
-    options: {
-        position: "topleft",
-    },
-
-    // method
-    onAdd: function (map) {
-        //console.log(map.getCenter());
-        // create button
-        const btn = L.DomUtil.create("button");
-        btn.title = "'.__('Back to Home', EMOSM_TXT_DOMAIN).'";
-        btn.innerHTML = htmlTemplate;
-        btn.className += "leaflet-bar back-to-home";
-        btn.setAttribute(
-        "style",
-        "margin-top: 46px; left: 0; display: none; cursor: pointer; justify-content: center;"
-        );
-
-        return btn;
-    },
-    });
-
-    // adding new button to map controll
-    map.addControl(new customControl());
-
-    const button = document.querySelector(".back-to-home");
-
-    // on drag end
-    map.on("dragend", getCenterOfMap);
-
-    // on zoom end
-    map.on("zoomend", getCenterOfMap);
-
-    function getCenterOfMap() {
-    const { lat, lng } = map.getCenter();
-    const latDZ = lat.toFixed(5) * 1;
-    const lngDZ = lng.toFixed(5) * 1;
-
-    arrayCheckAndClick([latDZ, lngDZ]);
-    }
-
-    // compare two arrays, if arrays diffrent show button home-back
-    function arrayCheckAndClick(array) {
-    const IfTheDefaultLocationIsDifferent =
-        [lat, lng].sort().join(",") !== array.sort().join(",");
-
-    button.style.display = IfTheDefaultLocationIsDifferent ? "flex" : "none";
-
-    // clicking on home-back set default view and zoom
-    button.addEventListener("click", function () {
-        // more fancy back to previous place
-        map.flyTo([lat, lng], zoom);
-        button.style.display = "none";
-    });
-    }
-    /// ------ 
-        ';
-        endif;
-    }
-
-    if( $mini_map == 1 ) {
-        if ( wp_is_mobile() ) : 
-            $toggleDisplay = "false";
-        else :
-            $toggleDisplay = "true";
-        endif;
-        $map .= "
-    const attribution =
-    '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors';
-    const osm2 = new L.TileLayer('".get_mapTile(1)."', { minZoom: 0, maxZoom: 13, attribution, id: 'mapbox/streets-v11' });
-    var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: ".esc_html($toggleDisplay)." }).addTo(map);
-    ";
-    }
-    $map .= "</script>";
-
-
-    return $map;
+    return $mapSearch;
 }
-add_shortcode( 'em_osmap_categories', 'em_openstreetmap_map_categories' );
 
 function get_mapTile($id) {
     

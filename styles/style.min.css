@@ -11,3 +11,6 @@ padding-bottom:56.25%;
 position:relative;
 height:0;
 }
+.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-layers {background-color: #ffffff!important;}
+.leaflet-touch .leaflet-bar a {color: #000000!important;}
+.leaflet-touch .leaflet-bar a:first-child {color: #000000!important;}

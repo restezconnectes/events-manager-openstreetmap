@@ -12,9 +12,18 @@ File events-manager-openstreetmap.pot available
 
 <a href="https://demo.restezconnectes.fr/events/evenement/">[Demo Here]</a>
 
-Current Version:  2.0.4
+Current Version:  2.0.7
 
 == Changelog ==
+
+-- 2.0.7 --
+* Bugs fixed map
+
+-- 2.0.6 --
+* Bugs fixed map location
+
+-- 2.0.5 --
+* Bugs fixed picture
 
 -- 2.0.4 --
 * Secure plugin

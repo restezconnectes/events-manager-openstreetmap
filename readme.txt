@@ -3,8 +3,8 @@ Contributors: Florent73
 Donate link: https://www.paypal.me/RestezConnectes/
 Tags: Events Manager, module, OpenStreetMap, Map
 Requires at least: 3.0
-Tested up to: 5.9
-Stable tag: 2.0.4
+Tested up to: 6.4
+Stable tag: 2.0.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,6 +15,8 @@ Events Manager OpenStreetMap is a WordPress plugin for Events Manager. It allows
 This plugin adds conditional logic to <a href="https://wordpress.org/plugins/events-manager/">[Events Manager]</a>.
 
 Events Manager OpenStreetMap is a WordPress plugin for Events Manager. It allows you to replace Google Maps to OpenStreetMap on all your event locations.
+
+See our demo website <a href="https://demo.restezconnectes.fr/events/evenement/" target="_blank">here</a>
 
 This plugin requires the installation and activation of the plugin Events Manager.
 
@@ -36,6 +38,15 @@ File events-manager-openstreetmap.pot available
 5. Categories Events Map
 
 == Changelog ==
+
+= 2.0.7 =
+* Bugs fixed map
+
+= 2.0.6 =
+* Bugs fixed map location
+
+= 2.0.5 =
+* Bugs fixed picture
 
 = 2.0.4 =
 * Secure plugin

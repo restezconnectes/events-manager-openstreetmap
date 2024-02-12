@@ -1,10 +1,11 @@
 <?php
 
 class EM_Openstreetmap_Class {
-    
+
+    public $text_domain = 'events-manager-openstreetmap';
+    //public $plugin_file = EM_openstreetmap::get_plugin_file();
+
 	public function hooks() {
-     
-        $this->text_domain = 'events-manager-openstreetmap';
 
         /* Version du plugin */
         $option['em_openstreetmap_version'] = EMOSM_VERSION;
@@ -13,7 +14,6 @@ class EM_Openstreetmap_Class {
         } else if ( get_option('em_openstreetmap_version') != EMOSM_VERSION ) {
             update_option('em_openstreetmap_version', EMOSM_VERSION);
         }
-        $this->plugin_file = EM_openstreetmap::get_plugin_file();
 
         //register_deactivation_hook(__FILE__, 'em_openstreetmap_uninstall');
         add_action( 'admin_menu', array( $this, 'em_openstreetmap_admin_menu' ) );
@@ -113,7 +113,7 @@ class EM_Openstreetmap_Class {
                 }
             }
 
-            echo '<img src="'.$urlIcon.'" width="18">';
+            echo '<img src="'.esc_url($urlIcon).'" width="18">';
         
         }
 

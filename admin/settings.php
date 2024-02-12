@@ -32,8 +32,8 @@ if(isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verify
     if(isset($_POST["em_page_events_idmap"]) && is_numeric($_POST["em_page_events_idmap"])) {
         update_option('em_openstreetmap_events_page', sanitize_text_field($_POST["em_page_events_idmap"]));
     }
-    if(isset($_POST["em_page_events_cat_idmap"]) && is_numeric($_POST["em_page_events_cat_idmap"])) {
-        update_option('em_openstreetmap_events_cat_page', sanitize_text_field($_POST["em_page_events_cat_idmap"]));
+    if(isset($_POST["em_page_cat_idmap"]) && is_numeric($_POST["em_page_cat_idmap"])) {
+        update_option('em_openstreetmap_categories_page', sanitize_text_field($_POST["em_page_cat_idmap"]));
     }
    
     $updateSetting = emosm_update_settings($_POST["em_openstreetmap_setting"], 'em_openstreetmap_setting');
@@ -50,21 +50,18 @@ if(isset($_POST['action']) && $_POST['action'] == 'update_settings' && wp_verify
 if(get_option('em_openstreetmap_setting')) { extract(get_option('em_openstreetmap_setting')); }
 $paramMMode = get_option('em_openstreetmap_setting');
 
-if(get_option('em_openstreetmap_css')) { extract(get_option('em_openstreetmap_css')); }
-$paramCss = get_option('em_openstreetmap_css');
-
-$admin_color = get_user_option( 'admin_color', get_current_user_id() );
+$admin_color = get_user_option('admin_color', get_current_user_id());
 $colors      = $_wp_admin_css_colors[$admin_color]->colors;
 
 
 ?>
 <style type="text/css">
-.switch-field input:checked + label { background-color: <?php echo $colors[2]; ?>; }
+.switch-field input:checked + label { background-color: <?php echo esc_html($colors[2]); ?>; }
 .switch-field input:checked + label:last-of-type {
-    background-color: <?php echo $colors[0]; ?>!important;
+    background-color: <?php echo esc_html($colors[0]); ?>!important;
     color:#e4e4e4!important;
 }
-.switch-field-mini input:checked + label { background-color: <?php echo $colors[2]; ?>; }
+.switch-field-mini input:checked + label { background-color: <?php echo esc_html($colors[2]); ?>; }
 .switch-field-mini input:checked + label:last-of-type {background-color: <?php echo esc_html($colors[0]); ?>!important;color:#e4e4e4!important;}
 
 .inputmap {border: 1px solid #ececec!important;padding: 0 8px 0 8px!important;line-height: 2!important;min-height: 30px!important;text-align: left!important; }
@@ -86,25 +83,35 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
 .switch-field label:last-of-type{border-radius:0 4px 4px 0}
 
 .CodeMirror {border: 1px solid #eee;height: auto;}
-    
+#emosm-general h2 sup {font-size: 14px;position: relative;font-weight: 400;background: #0085ba;color: #fff !important;padding: 2px 4px !important;border-radius: 3px;top: 5px;left: 3px;border: none !important;}
+#fond-entete {background-image: url("<?php echo EMOSM_PLUGIN_URL; ?>/images/fond-entete.png");background-repeat: repeat-x;text-align: center;height: 124px;margin: 0!important;padding: 0!important;}
 </style>
-<div class="wrap">
+<div id="emosm-general" class="wrap">
     <h2><?php _e('EM OpenStreeMap', EMOSM_TXT_DOMAIN); ?> v.<?php echo esc_html(EMOSM_VERSION); ?></h2>
-    <div style="margin-top:40px;">
+    <div>
         <form method="post" action="admin.php?page=em_openstreetmap_settings_page" name="valide_settings">
+        <div style="margin-left: auto;width:20%;text-align:right;"><?php submit_button(); ?></div>
             <input type="hidden" name="action" value="update_settings" />
             <?php wp_nonce_field('valid-settings', 'security-settings'); ?>
 
-            <table style="width:250px;margin-left: auto;margin-right: auto;" cellspacing="0">
-                <tbody id="the-list">
-                    <tr>
-                        <td>
-                            <img src="<?php echo plugins_url('events-manager-openstreetmap/assets/banner-772x250.png'); ?>" valign="bottom"  />
-                        <td>
-                    </tr>
+            <table style="width: 80%;margin-left: auto;margin-right: auto;height: 94px;margin-top: 2em;">
+                <tr>
+                    <td style="width:95px;margin: 0!important;padding: 0!important;"><img src="<?php echo EMOSM_PLUGIN_URL; ?>/images/fond-g.png" width="95" height="124" /></td>
+                    <td id="fond-entete">
+                        <div style="width: 80%;margin-left: auto;margin-right: auto;margin-top: 2em;">
+                            <div style="float:left;width:70%;"><img src="<?php echo EMOSM_PLUGIN_URL; ?>/images/fond-logo.png" width="142" height="34" /><h2 style="color:#ffffff;"><?php _e('Event Manager OpenStreeMap', EMOSM_TXT_DOMAIN); ?><sup><?php echo 'V.'.EMOSM_VERSION; ?></sup><h2></div>
+                            <div style="float:left;width:30%;"><img src="<?php echo EMOSM_PLUGIN_URL; ?>/images/Openstreetmap_logo.png" width="95" height="95" /></div>
+                        </div>
+                    </td>
+                    <td style="width:95px;margin: 0!important;padding: 0!important;"><img src="<?php echo EMOSM_PLUGIN_URL; ?>/images/fond-d.png" width="95" height="124" /></td>
+                </tr>
+            </table>
+
+            <table style="width: 80%;margin-left: auto;margin-right: auto;">
+                <tbody>                   
                     <tr style="background-color:#D8DCE1;">
                         <td style="padding:2em;width:125px;">
-                            
+                        
                             <strong><?php _e( 'Select Location Map Page:', EMOSM_TXT_DOMAIN ); ?></strong>
                             <?php
                             if( get_option('em_openstreetmap_location_page' ) ) {
@@ -117,8 +124,8 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             ?>
                             <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap]<?php echo $linkPage; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN)); 
-                            wp_dropdown_pages($args);
+                            $argsLocation = array('name' => 'em_page_idmap', 'selected' => $idSelectPage, 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN)); 
+                            wp_dropdown_pages($argsLocation);
 
                             ?><br /><br />
                             <strong><?php _e('Select Events Map Page:', EMOSM_TXT_DOMAIN); ?></strong>
@@ -133,13 +140,13 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             ?>
                             <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap type="events"]<?php echo $linkPageEvents; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_events_idmap', 'selected' => esc_html($idSelectPageEvents), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
-                            wp_dropdown_pages($args);
+                            $argsEvents = array('name' => 'em_page_events_idmap', 'selected' => esc_html($idSelectPageEvents), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            wp_dropdown_pages($argsEvents);
 
                             ?><br /><br />
                             <strong><?php _e('Select Cat Map Page:', EMOSM_TXT_DOMAIN); ?></strong>
                             <?php
-                            if(get_option('em_openstreetmap_categories_page') ) {
+                            if( get_option('em_openstreetmap_categories_page') ) {
                                 $idSelectPageCat = get_option('em_openstreetmap_categories_page' );
                                 $linkPageCat = ' (<a href="'.get_the_permalink($idSelectPageCat).'" target="_blank">'.__( 'See this page', EMOSM_TXT_DOMAIN ).'</a>)';
                             } else {
@@ -149,8 +156,8 @@ $colors      = $_wp_admin_css_colors[$admin_color]->colors;
                             ?>
                             <p><?php _e('There must be the shortcode:', EMOSM_TXT_DOMAIN); ?> [em_osmap_categories]<?php echo $linkPageCat; ?></p>
                             <?php
-                            $args = array('name' => 'em_page_events_cat_idmap', 'selected' => esc_html($idSelectPageCat), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
-                            wp_dropdown_pages($args);
+                            $argsCat = array('name' => 'em_page_cat_idmap', 'selected' => esc_html($idSelectPageCat), 'class' => 'inputmap','show_option_none' => __('Please select a page', EMOSM_TXT_DOMAIN ) ); 
+                            wp_dropdown_pages($argsCat);
 
                             ?>
                             <br /><br /><hr /><br />
